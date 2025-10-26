@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Gasolina</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: #0a0a0a;
+        min-height: 100vh;
+        padding: 20px;
+        color: #e0e0e0;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(0,255,157,0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: gridMove 20s linear infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    @keyframes gridMove {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(50px, 50px); }
+    }
+
+    .container {
+        max-width: 500px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .card {
+        background: #1a1a1a;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 24px rgba(0,255,157,0.1);
+        border: 1px solid #00ff9d33;
+        backdrop-filter: blur(10px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(0,255,157,0.15);
+    }
+
+    h1 {
+        color: #00ff9d;
+        text-align: center;
+        margin-bottom: 24px;
+        font-size: 28px;
+        font-weight: 600;
+        text-shadow: 0 0 20px rgba(0,255,157,0.5);
+        animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { text-shadow: 0 0 20px rgba(0,255,157,0.5); }
+        50% { text-shadow: 0 0 30px rgba(0,255,157,0.8); }
+    }
+
+    h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+        color: #00ff9d;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 14px;
+        color: #b0b0b0;
+        font-weight: 500;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 2px solid #2a2a2a;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: #151515;
+        color: #e0e0e0;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #00ff9d;
+        background: #1a1a1a;
+        box-shadow: 0 0 15px rgba(0,255,157,0.2);
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #00ff9d 0%, #00d4aa 100%);
+        color: #000;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    button::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    button:active::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    button:active {
+        transform: scale(0.98);
+    }
+
+    button:hover {
+        box-shadow: 0 4px 20px rgba(0,255,157,0.4);
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .stat-box {
+        background: linear-gradient(135deg, #1a2a1a 0%, #0d1f0d 100%);
+        padding: 16px;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid #00ff9d33;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .stat-box:hover {
+        transform: scale(1.05);
+        border-color: #00ff9d;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: #00ff9d;
+        text-shadow: 0 0 10px rgba(0,255,157,0.3);
+    }
+
+    .history-item {
+        background: #151515;
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        border-left: 4px solid #00ff9d;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .history-date {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 8px;
+    }
+
+    .history-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        font-size: 14px;
+    }
+
+    .history-detail {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .history-detail-label {
+        font-size: 11px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .history-detail-value {
+        font-weight: 600;
+        color: #e0e0e0;
+        margin-top: 2px;
+    }
+
+    .autonomy {
+        background: linear-gradient(135deg, #1a2a1a 0%, #0d1f0d 100%);
+        color: #00ff9d;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 8px;
+        font-size: 14px;
+        border: 1px solid #00ff9d33;
+        animation: glow 2s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+        0%, 100% { box-shadow: 0 0 5px rgba(0,255,157,0.3); }
+        50% { box-shadow: 0 0 15px rgba(0,255,157,0.6); }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #999;
+    }
+
+    .delete-btn {
+        background: #ff4444;
+        padding: 6px 12px;
+        font-size: 12px;
+        margin-top: 8px;
+        width: auto;
+        color: #fff;
+    }
+
+    .no-history {
+        text-align: center;
+        color: #666;
+        padding: 20px;
+        font-size: 14px;
+    }
+
+    .chart-container {
+        margin-top: 16px;
+        background: #151515;
+        border-radius: 12px;
+        padding: 16px;
+        border: 1px solid #00ff9d33;
+    }
+
+    .chart-bar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .chart-label {
+        width: 80px;
+        font-size: 12px;
+        color: #888;
+    }
+
+    .chart-bar-fill {
+        flex: 1;
+        height: 24px;
+        background: linear-gradient(90deg, #00ff9d 0%, #00d4aa 100%);
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        transition: width 0.5s ease;
+    }
+
+    .chart-bar-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .chart-value {
+        margin-left: 8px;
+        font-size: 12px;
+        color: #00ff9d;
+        font-weight: 600;
+        min-width: 60px;
+    }
+
+    .success-message {
+        background: linear-gradient(135deg, #1a2a1a 0%, #0d1f0d 100%);
+        color: #00ff9d;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        border: 1px solid #00ff9d;
+        text-align: center;
+        animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .filter-btn {
+        flex: 1;
+        padding: 8px;
+        background: #151515;
+        border: 1px solid #2a2a2a;
+        color: #888;
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .filter-btn.active {
+        background: linear-gradient(135deg, #00ff9d 0%, #00d4aa 100%);
+        color: #000;
+        border-color: #00ff9d;
+    }
+
+    .cost-per-km {
+        background: linear-gradient(135deg, #2a1a1a 0%, #1f0d0d 100%);
+        color: #ff6b6b;
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 12px;
+        border: 1px solid #ff6b6b33;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <h1>⛽ Controle de Gasolina</h1>
+
+```
+    <div id="successMessage" style="display: none;"></div>
+    
+    <div class="card" id="statsCard" style="display: none;">
+        <h2>📊 Estatísticas</h2>
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Autonomia Média</div>
+                <div class="stat-value" id="avgAutonomy">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Total Gasto</div>
+                <div class="stat-value" id="totalSpent">-</div>
+            </div>
+        </div>
+        <div class="cost-per-km" id="costPerKm" style="display: none;">
+            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 4px;">CUSTO POR KM</div>
+            <div style="font-size: 18px; font-weight: 700;">-</div>
+        </div>
+        <div class="chart-container" id="chartContainer" style="display: none;">
+            <h3 style="color: #00ff9d; font-size: 14px; margin-bottom: 12px;">Últimos 5 Abastecimentos</h3>
+            <div id="chartBars"></div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>➕ Novo Abastecimento</h2>
+        <form id="fuelForm">
+            <div class="form-group">
+                <label>Preço por litro (R$)</label>
+                <input type="number" step="0.01" id="pricePerLiter" placeholder="5.89" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Valor total pago (R$)</label>
+                <input type="number" step="0.01" id="totalPaid" placeholder="100.00" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Quilometragem atual (km)</label>
+                <input type="text" id="currentKm" placeholder="200.000" required>
+            </div>
+            
+            <button type="submit">Registrar Abastecimento</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>📜 Histórico de Abastecimentos</h2>
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterHistory('all')">Todos</button>
+            <button class="filter-btn" onclick="filterHistory('week')">Semana</button>
+            <button class="filter-btn" onclick="filterHistory('month')">Mês</button>
+        </div>
+        <div id="historyContainer">
+            <div class="no-history">Nenhum abastecimento registrado ainda</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let refuelings = [];
+    let currentFilter = 'all';
+
+    function loadData() {
+        const saved = localStorage.getItem('refuelings');
+        if (saved) {
+            refuelings = JSON.parse(saved);
+            renderHistory();
+            updateStats();
+            updateChart();
+        }
+    }
+
+    function formatKm(value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function parseKm(value) {
+        return parseFloat(value.replace(/\./g, '').replace(',', '.'));
+    }
+
+    // Formatar KM automaticamente enquanto digita
+    document.getElementById('currentKm').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value) {
+            e.target.value = formatKm(value);
+        }
+    });
+
+    function saveData() {
+        localStorage.setItem('refuelings', JSON.stringify(refuelings));
+    }
+
+    function showSuccessMessage(message) {
+        const msgDiv = document.getElementById('successMessage');
+        msgDiv.innerHTML = `<div class="success-message">✓ ${message}</div>`;
+        msgDiv.style.display = 'block';
+        setTimeout(() => {
+            msgDiv.style.display = 'none';
+        }, 3000);
+    }
+
+    document.getElementById('fuelForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const pricePerLiter = parseFloat(document.getElementById('pricePerLiter').value);
+        const totalPaid = parseFloat(document.getElementById('totalPaid').value);
+        const currentKm = parseKm(document.getElementById('currentKm').value);
+        
+        const liters = totalPaid / pricePerLiter;
+        
+        let autonomy = null;
+        if (refuelings.length > 0) {
+            const lastRefueling = refuelings[refuelings.length - 1];
+            const kmTraveled = currentKm - lastRefueling.km;
+            autonomy = kmTraveled / liters;
+        }
+        
+        const refueling = {
+            id: Date.now(),
+            date: new Date().toISOString(),
+            pricePerLiter,
+            totalPaid,
+            liters: liters.toFixed(2),
+            km: currentKm,
+            autonomy: autonomy ? autonomy.toFixed(2) : null
+        };
+        
+        refuelings.push(refueling);
+        saveData();
+        renderHistory();
+        updateStats();
+        updateChart();
+        
+        showSuccessMessage('Abastecimento registrado com sucesso!');
+        
+        document.getElementById('fuelForm').reset();
+    });
+
+    function filterHistory(filter) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        renderHistory();
+    }
+
+    function getFilteredRefuelings() {
+        const now = new Date();
+        const filtered = refuelings.filter(r => {
+            const refuelDate = new Date(r.date);
+            if (currentFilter === 'week') {
+                const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+                return refuelDate >= weekAgo;
+            } else if (currentFilter === 'month') {
+                const monthAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
+                return refuelDate >= monthAgo;
+            }
+            return true;
+        });
+        return filtered;
+    }
+
+    function renderHistory() {
+        const container = document.getElementById('historyContainer');
+        const filtered = getFilteredRefuelings();
+        
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="no-history">Nenhum abastecimento encontrado</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        
+        filtered.slice().reverse().forEach(refueling => {
+            const date = new Date(refueling.date);
+            const dateStr = date.toLocaleDateString('pt-BR') + ' às ' + date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+            
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerHTML = `
+                <div class="history-date">${dateStr}</div>
+                <div class="history-details">
+                    <div class="history-detail">
+                        <span class="history-detail-label">Preço/L</span>
+                        <span class="history-detail-value">R$ ${refueling.pricePerLiter.toFixed(2)}</span>
+                    </div>
+                    <div class="history-detail">
+                        <span class="history-detail-label">Total Pago</span>
+                        <span class="history-detail-value">R$ ${refueling.totalPaid.toFixed(2)}</span>
+                    </div>
+                    <div class="history-detail">
+                        <span class="history-detail-label">Litros</span>
+                        <span class="history-detail-value">${refueling.liters} L</span>
+                    </div>
+                    <div class="history-detail">
+                        <span class="history-detail-label">KM</span>
+                        <span class="history-detail-value">${formatKm(refueling.km.toFixed(0))} km</span>
+                    </div>
+                </div>
+                ${refueling.autonomy ? `<div class="autonomy">⚡ Autonomia: ${refueling.autonomy} km/L</div>` : ''}
+                <button class="delete-btn" onclick="deleteRefueling(${refueling.id})">🗑️ Excluir</button>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    function deleteRefueling(id) {
+        if (confirm('Tem certeza que deseja excluir este abastecimento?')) {
+            refuelings = refuelings.filter(r => r.id !== id);
+            saveData();
+            renderHistory();
+            updateStats();
+            updateChart();
+            showSuccessMessage('Abastecimento excluído!');
+        }
+    }
+
+    function updateStats() {
+        const statsCard = document.getElementById('statsCard');
+        
+        if (refuelings.length === 0) {
+            statsCard.style.display = 'none';
+            return;
+        }
+        
+        statsCard.style.display = 'block';
+        
+        const totalSpent = refuelings.reduce((sum, r) => sum + r.totalPaid, 0);
+        document.getElementById('totalSpent').textContent = `R$ ${totalSpent.toFixed(2)}`;
+        
+        const autonomies = refuelings.filter(r => r.autonomy !== null).map(r => parseFloat(r.autonomy));
+        if (autonomies.length > 0) {
+            const avgAutonomy = autonomies.reduce((sum, a) => sum + a, 0) / autonomies.length;
+            document.getElementById('avgAutonomy').textContent = `${avgAutonomy.toFixed(2)} km/L`;
+            
+            // Calcular custo por km
+            if (refuelings.length >= 2) {
+                const firstKm = refuelings[0].km;
+                const lastKm = refuelings[refuelings.length - 1].km;
+                const totalKm = lastKm - firstKm;
+                const costPerKm = totalSpent / totalKm;
+                const costPerKmDiv = document.getElementById('costPerKm');
+                costPerKmDiv.style.display = 'block';
+                costPerKmDiv.querySelector('div:last-child').textContent = `R$ ${costPerKm.toFixed(2)}/km`;
+            }
+        } else {
+            document.getElementById('avgAutonomy').textContent = '-';
+        }
+    }
+
+    function updateChart() {
+        const chartContainer = document.getElementById('chartContainer');
+        const chartBars = document.getElementById('chartBars');
+        
+        const autonomies = refuelings.filter(r => r.autonomy !== null);
+        
+        if (autonomies.length < 2) {
+            chartContainer.style.display = 'none';
+            return;
+        }
+        
+        chartContainer.style.display = 'block';
+        chartBars.innerHTML = '';
+        
+        const last5 = autonomies.slice(-5);
+        const maxAutonomy = Math.max(...last5.map(r => parseFloat(r.autonomy)));
+        
+        last5.forEach((refueling, index) => {
+            const autonomy = parseFloat(refueling.autonomy);
+            const percentage = (autonomy / maxAutonomy) * 100;
+            
+            const bar = document.createElement('div');
+            bar.className = 'chart-bar';
+            bar.innerHTML = `
+                <div class="chart-label">#${autonomies.length - last5.length + index + 1}</div>
+                <div class="chart-bar-fill" style="width: ${percentage}%"></div>
+                <div class="chart-value">${autonomy} km/L</div>
+            `;
+            chartBars.appendChild(bar);
+        });
+    }
+
+    loadData();
+</script>
+```
+
+</body>
+</html>
