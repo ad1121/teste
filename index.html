@@ -454,19 +454,7 @@
 
             <div class="form-group">
                 <label>Data e hora do abastecimento</label>
-                <div class="date-option selected" onclick="selectDateOption('now', event)">
-                    <input type="radio" name="dateOption" id="dateNow" value="now" checked>
-                    <label for="dateNow">Agora (data e hora atual)</label>
-                </div>
-                
-                <div class="date-option" onclick="selectDateOption('custom', event)">
-                    <input type="radio" name="dateOption" id="dateCustom" value="custom">
-                    <label for="dateCustom">Escolher data e hora</label>
-                </div>
-                
-                <div id="customDateContainer" style="display: none; margin-top: 8px;">
-                    <input type="datetime-local" id="customDate" class="custom-date-input">
-                </div>
+                <input type="datetime-local" id="refuelDate" class="custom-date-input" required>
             </div>
             
             <button type="submit">Registrar Abastecimento</button>
@@ -611,10 +599,7 @@
         
         // Reset form e opções de data
         document.getElementById('fuelForm').reset();
-        selectedDateOption = 'now';
-        document.querySelectorAll('.date-option').forEach(opt => opt.classList.remove('selected'));
-        document.querySelector('.date-option:first-of-type').classList.add('selected');
-        document.getElementById('customDateContainer').style.display = 'none';
+        setDefaultDateTime();
     });
 
     function filterHistory(filter) {
