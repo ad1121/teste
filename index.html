@@ -409,6 +409,7 @@
     <div class="container">
         <h1>⛽ Controle de Gasolina</h1>
 
+
     <div id="successMessage" style="display: none;"></div>
     
     <div class="card" id="statsCard" style="display: none;">
@@ -438,12 +439,12 @@
         <form id="fuelForm">
             <div class="form-group">
                 <label>Preço por litro (R$)</label>
-                <input type="number" step="0.01" id="pricePerLiter" placeholder="5.89" required>
+                <input type="text" id="pricePerLiter" placeholder="5,89" required>
             </div>
             
             <div class="form-group">
                 <label>Valor total pago (R$)</label>
-                <input type="number" step="0.01" id="totalPaid" placeholder="100.00" required>
+                <input type="text" id="totalPaid" placeholder="100,00" required>
             </div>
             
             <div class="form-group">
@@ -507,11 +508,44 @@
         return parseFloat(value.replace(/\./g, '').replace(',', '.'));
     }
 
+    function formatMoney(value) {
+        // Remove tudo exceto números
+        value = value.replace(/\D/g, '');
+        
+        // Converte para número e divide por 100 para ter centavos
+        value = (parseFloat(value) / 100).toFixed(2);
+        
+        // Formata com vírgula para decimal
+        value = value.replace('.', ',');
+        
+        return value;
+    }
+
+    function parseMoney(value) {
+        return parseFloat(value.replace(/\./g, '').replace(',', '.'));
+    }
+
     // Formatar KM automaticamente enquanto digita
     document.getElementById('currentKm').addEventListener('input', function(e) {
         let value = e.target.value.replace(/\D/g, '');
         if (value) {
             e.target.value = formatKm(value);
+        }
+    });
+
+    // Formatar preço por litro automaticamente
+    document.getElementById('pricePerLiter').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value) {
+            e.target.value = formatMoney(value);
+        }
+    });
+
+    // Formatar valor total automaticamente
+    document.getElementById('totalPaid').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value) {
+            e.target.value = formatMoney(value);
         }
     });
 
@@ -531,8 +565,8 @@
     document.getElementById('fuelForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const pricePerLiter = parseFloat(document.getElementById('pricePerLiter').value);
-        const totalPaid = parseFloat(document.getElementById('totalPaid').value);
+        const pricePerLiter = parseMoney(document.getElementById('pricePerLiter').value);
+        const totalPaid = parseMoney(document.getElementById('totalPaid').value);
         const currentKm = parseKm(document.getElementById('currentKm').value);
         
         // Obter data selecionada
@@ -728,7 +762,6 @@
 
     loadData();
 </script>
-
 
 </body>
 </html>
