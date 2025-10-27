@@ -454,17 +454,17 @@
 
             <div class="form-group">
                 <label>Data e hora do abastecimento</label>
-                <div class="date-option selected" onclick="selectDateOption('now')">
-                    <input type="radio" name="dateOption" id="dateNow" checked>
+                <div class="date-option selected" onclick="selectDateOption('now', event)">
+                    <input type="radio" name="dateOption" id="dateNow" value="now" checked>
                     <label for="dateNow">Agora (data e hora atual)</label>
                 </div>
                 
-                <div class="date-option" onclick="selectDateOption('custom')">
-                    <input type="radio" name="dateOption" id="dateCustom">
+                <div class="date-option" onclick="selectDateOption('custom', event)">
+                    <input type="radio" name="dateOption" id="dateCustom" value="custom">
                     <label for="dateCustom">Escolher data e hora</label>
                 </div>
                 
-                <div id="customDateContainer" style="display: none;">
+                <div id="customDateContainer" style="display: none; margin-top: 8px;">
                     <input type="datetime-local" id="customDate" class="custom-date-input">
                 </div>
             </div>
@@ -565,8 +565,8 @@
     document.getElementById('fuelForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const pricePerLiter = parseMoney(document.getElementById('pricePerLiter').value);
-        const totalPaid = parseMoney(document.getElementById('totalPaid').value);
+        const pricePerLiter = parseFloat(document.getElementById('pricePerLiter').value);
+        const totalPaid = parseFloat(document.getElementById('totalPaid').value);
         const currentKm = parseKm(document.getElementById('currentKm').value);
         
         // Obter data selecionada
@@ -762,6 +762,7 @@
 
     loadData();
 </script>
+
 
 </body>
 </html>
