@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Delivery</title>
+    <title>Monte seu Bolo - Confeitaria</title>
     <style>
         * {
             margin: 0;
@@ -13,15 +13,16 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
         /* Header */
         .header {
-            background: #ea1d2c;
-            color: white;
+            background: white;
+            color: #764ba2;
             padding: 1rem 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -62,22 +63,22 @@
         }
 
         .btn-primary {
-            background: white;
-            color: #ea1d2c;
+            background: #764ba2;
+            color: white;
         }
 
         .btn-primary:hover {
-            background: #f0f0f0;
+            background: #5a3780;
         }
 
         .btn-secondary {
             background: transparent;
-            color: white;
-            border: 2px solid white;
+            color: #764ba2;
+            border: 2px solid #764ba2;
         }
 
         .btn-secondary:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(118, 75, 162, 0.1);
         }
 
         .btn-success {
@@ -95,7 +96,7 @@
             color: white;
         }
 
-        /* Container Principal */
+        /* Container */
         .container {
             max-width: 1200px;
             margin: 2rem auto;
@@ -107,8 +108,8 @@
             text-align: center;
             padding: 4rem 2rem;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
 
         .home-hero h1 {
@@ -133,24 +134,24 @@
         .access-card {
             background: white;
             padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             text-align: center;
             cursor: pointer;
             transition: transform 0.3s;
         }
 
         .access-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-10px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         }
 
         .access-card-icon {
-            font-size: 3rem;
+            font-size: 4rem;
             margin-bottom: 1rem;
         }
 
-        /* Modal Login */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -171,9 +172,11 @@
         .modal-content {
             background: white;
             padding: 2rem;
-            border-radius: 12px;
+            border-radius: 16px;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal-header {
@@ -207,7 +210,7 @@
         .form-group textarea {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #ddd;
+            border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 1rem;
         }
@@ -216,351 +219,153 @@
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #ea1d2c;
+            border-color: #764ba2;
         }
 
-        /* Área do Cliente */
-        .search-bar {
+        /* Área do Cliente - Montagem */
+        .cake-builder {
             background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .builder-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #764ba2;
             margin-bottom: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .search-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .categories {
+        .builder-steps {
             display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
             gap: 1rem;
             overflow-x: auto;
-            padding: 1rem 0;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 150px;
+        }
+
+        .step.active {
+            background: #764ba2;
+            color: white;
+        }
+
+        .step-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
-        .category-btn {
-            padding: 0.75rem 1.5rem;
+        .option-card {
             background: white;
-            border: 2px solid #ddd;
-            border-radius: 25px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.3s;
-        }
-
-        .category-btn.active {
-            background: #ea1d2c;
-            color: white;
-            border-color: #ea1d2c;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .product-card {
-            background: white;
+            border: 3px solid #e0e0e0;
             border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-            cursor: pointer;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: #f0f0f0;
-        }
-
-        .product-info {
-            padding: 1rem;
-        }
-
-        .product-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .product-description {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-price {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #ea1d2c;
-            margin: 0.5rem 0;
-        }
-
-        .product-promotion {
-            background: #fff3cd;
-            padding: 0.5rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: #856404;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-inactive {
-            opacity: 0.6;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .badge-success {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .badge-danger {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        /* Carrinho */
-        .cart-float {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: #ea1d2c;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 50px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            z-index: 50;
-        }
-
-        .cart-count {
-            background: white;
-            color: #ea1d2c;
-            padding: 0.25rem 0.75rem;
-            border-radius: 50%;
-            font-weight: bold;
-        }
-
-        .cart-panel {
-            position: fixed;
-            right: 0;
-            top: 0;
-            width: 400px;
-            height: 100%;
-            background: white;
-            box-shadow: -4px 0 12px rgba(0,0,0,0.3);
-            transform: translateX(100%);
-            transition: transform 0.3s;
-            z-index: 200;
-            overflow-y: auto;
-        }
-
-        .cart-panel.active {
-            transform: translateX(0);
-        }
-
-        .cart-header {
-            background: #ea1d2c;
-            color: white;
             padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cart-items {
-            padding: 1rem;
-        }
-
-        .cart-item {
-            display: flex;
-            gap: 1rem;
-            padding: 1rem;
-            border-bottom: 1px solid #eee;
-        }
-
-        .cart-item-image {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .cart-item-info {
-            flex: 1;
-        }
-
-        .cart-item-name {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .cart-item-price {
-            color: #ea1d2c;
-            font-weight: 600;
-        }
-
-        .cart-item-qty {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .qty-btn {
-            width: 30px;
-            height: 30px;
-            border: none;
-            background: #f0f0f0;
-            border-radius: 50%;
             cursor: pointer;
-            font-weight: bold;
+            transition: all 0.3s;
+            text-align: center;
         }
 
-        .cart-footer {
-            position: sticky;
-            bottom: 0;
-            background: white;
-            padding: 1rem;
-            border-top: 2px solid #eee;
+        .option-card:hover {
+            border-color: #764ba2;
+            transform: translateY(-5px);
         }
 
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.3rem;
-            font-weight: bold;
+        .option-card.selected {
+            border-color: #764ba2;
+            background: #f5f0ff;
+        }
+
+        .option-icon {
+            font-size: 3rem;
             margin-bottom: 1rem;
         }
 
-        /* Painel Admin Loja */
-        .admin-nav {
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
+        .option-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .stat-value {
-            font-size: 2rem;
+        .option-price {
+            font-size: 1.3rem;
             font-weight: bold;
-            color: #ea1d2c;
+            color: #764ba2;
         }
 
-        .stat-label {
+        .option-description {
+            font-size: 0.9rem;
             color: #666;
             margin-top: 0.5rem;
         }
 
-        .products-table {
+        /* Resumo do Pedido */
+        .order-summary {
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 100px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .summary-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 1.5rem;
+            text-align: center;
         }
 
-        th, td {
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
             padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
+            background: #f8f8f8;
+            border-radius: 8px;
+            margin-bottom: 1rem;
         }
 
-        th {
-            background: #f8f8f8;
+        .summary-label {
             font-weight: 600;
             color: #333;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
+        .summary-value {
+            color: #666;
         }
 
-        .icon-btn {
-            padding: 0.5rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .summary-total {
+            border-top: 3px solid #764ba2;
+            padding-top: 1rem;
+            margin-top: 1rem;
         }
 
-        /* Responsivo */
-        @media (max-width: 768px) {
-            .cart-panel {
-                width: 100%;
-            }
-
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            table {
-                font-size: 0.85rem;
-            }
-
-            th, td {
-                padding: 0.5rem;
-            }
-        }
-
-        .hidden {
-            display: none !important;
+        .total-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #764ba2;
+            text-align: center;
+            margin: 1rem 0;
         }
 
         .whatsapp-btn {
@@ -582,6 +387,119 @@
         .whatsapp-btn:hover {
             background: #128C7E;
         }
+
+        .whatsapp-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Admin */
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: white;
+            border: 2px solid #764ba2;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #764ba2;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #764ba2;
+            color: white;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background: #f0f0f0;
+        }
+
+        .item-info {
+            margin-bottom: 1rem;
+        }
+
+        .item-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #764ba2;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        /* Layout de 2 colunas */
+        .two-column {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: static;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -589,92 +507,120 @@
     <header class="header">
         <div class="header-content">
             <div class="logo">
-                🍔 DeliveryApp
+                🎂 Confeitaria Fafa
             </div>
             <div class="nav-buttons" id="navButtons">
-                <button class="btn btn-primary" onclick="showHome()">Início</button>
+                <button class="btn btn-secondary" onclick="showLogin()">🔐 Admin</button>
             </div>
         </div>
     </header>
 
     <!-- Container Principal -->
     <div class="container">
-        <!-- Página Inicial -->
-        <div id="homePage">
-            <div class="home-hero">
-                <h1>Bem-vindo ao DeliveryApp</h1>
-                <p>Escolha como deseja acessar a plataforma</p>
-            </div>
-            <div class="access-cards">
-                <div class="access-card" onclick="showLogin('client')">
-                    <div class="access-card-icon">👤</div>
-                    <h2>Sou Cliente</h2>
-                    <p>Faça seu pedido e receba em casa</p>
-                </div>
-                <div class="access-card" onclick="showLogin('store')">
-                    <div class="access-card-icon">🏪</div>
-                    <h2>Sou Loja</h2>
-                    <p>Gerencie seus produtos e vendas</p>
-                </div>
-            </div>
-        </div>
 
         <!-- Área do Cliente -->
         <div id="clientPage" class="hidden">
-            <div class="search-bar">
-                <input type="text" class="search-input" placeholder="🔍 Buscar produtos..." id="searchInput" oninput="filterProducts()">
-            </div>
+            <div class="two-column">
+                <div>
+                    <div class="cake-builder">
+                        <h1 class="builder-title">Monte seu Bolo Perfeito 🎂</h1>
+                        
+                        <div class="builder-steps">
+                            <div class="step active" onclick="showStep('massa')">
+                                <div class="step-number">1</div>
+                                <div>Massa</div>
+                            </div>
+                            <div class="step" onclick="showStep('recheio')">
+                                <div class="step-number">2</div>
+                                <div>Recheio</div>
+                            </div>
+                            <div class="step" onclick="showStep('cobertura')">
+                                <div class="step-number">3</div>
+                                <div>Cobertura</div>
+                            </div>
+                        </div>
 
-            <div class="categories">
-                <button class="category-btn active" onclick="filterByCategory('Todos')">Todos</button>
-                <button class="category-btn" onclick="filterByCategory('Lanches')">🍔 Lanches</button>
-                <button class="category-btn" onclick="filterByCategory('Bebidas')">🥤 Bebidas</button>
-                <button class="category-btn" onclick="filterByCategory('Sobremesas')">🍰 Sobremesas</button>
-                <button class="category-btn" onclick="filterByCategory('Porções')">🍟 Porções</button>
-                <button class="category-btn" onclick="filterByCategory('Pizzas')">🍕 Pizzas</button>
-            </div>
+                        <!-- Opções de Massa -->
+                        <div id="stepMassa" class="step-content">
+                            <h2 style="margin-bottom: 1rem;">Escolha a Massa</h2>
+                            <div class="options-grid" id="massaOptions"></div>
+                        </div>
 
-            <div class="products-grid" id="productsGrid"></div>
+                        <!-- Opções de Recheio -->
+                        <div id="stepRecheio" class="step-content hidden">
+                            <h2 style="margin-bottom: 1rem;">Escolha o Recheio</h2>
+                            <div class="options-grid" id="recheioOptions"></div>
+                        </div>
+
+                        <!-- Opções de Cobertura -->
+                        <div id="stepCobertura" class="step-content hidden">
+                            <h2 style="margin-bottom: 1rem;">Escolha a Cobertura</h2>
+                            <div class="options-grid" id="coberturaOptions"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumo do Pedido -->
+                <div>
+                    <div class="order-summary">
+                        <h2 class="summary-title">Seu Bolo Personalizado</h2>
+                        
+                        <div class="summary-item">
+                            <span class="summary-label">🍰 Massa:</span>
+                            <span class="summary-value" id="selectedMassa">-</span>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <span class="summary-label">🍓 Recheio:</span>
+                            <span class="summary-value" id="selectedRecheio">-</span>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <span class="summary-label">🎨 Cobertura:</span>
+                            <span class="summary-value" id="selectedCobertura">-</span>
+                        </div>
+
+                        <div class="summary-total">
+                            <div class="total-price" id="totalPrice">R$ 0,00</div>
+                            <button class="whatsapp-btn" id="finishBtn" onclick="sendWhatsApp()" disabled>
+                                📱 Fazer Pedido pelo WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Painel Admin Loja -->
+        <!-- Área Administrativa -->
         <div id="storePage" class="hidden">
-            <div class="admin-nav">
-                <button class="btn btn-success" onclick="showProductForm()">➕ Novo Produto</button>
-                <button class="btn btn-warning" onclick="showPromotions()">🏷️ Promoções</button>
-                <button class="btn btn-primary" onclick="showStats()">📊 Estatísticas</button>
-            </div>
+            <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                <div class="admin-tabs">
+                    <button class="tab-btn active" onclick="showTab('massa')">🍰 Massas</button>
+                    <button class="tab-btn" onclick="showTab('recheio')">🍓 Recheios</button>
+                    <button class="tab-btn" onclick="showTab('cobertura')">🎨 Coberturas</button>
+                </div>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="totalProducts">0</div>
-                    <div class="stat-label">Total de Produtos</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="activeProducts">0</div>
-                    <div class="stat-label">Produtos Ativos</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="totalPromotions">0</div>
-                    <div class="stat-label">Promoções Ativas</div>
-                </div>
-            </div>
+                <button class="btn btn-success" style="margin-bottom: 2rem;" onclick="showItemForm()">
+                    ➕ Adicionar Novo Item
+                </button>
 
-            <div class="products-table">
-                <h2 style="margin-bottom: 1rem;">Meus Produtos</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Imagem</th>
-                            <th>Nome</th>
-                            <th>Categoria</th>
-                            <th>Preço</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productsTableBody"></tbody>
-                </table>
+                <!-- Lista de Massas -->
+                <div id="tabMassa" class="tab-content">
+                    <h2 style="margin-bottom: 1rem;">Massas Cadastradas</h2>
+                    <div class="items-grid" id="massaList"></div>
+                </div>
+
+                <!-- Lista de Recheios -->
+                <div id="tabRecheio" class="tab-content hidden">
+                    <h2 style="margin-bottom: 1rem;">Recheios Cadastrados</h2>
+                    <div class="items-grid" id="recheioList"></div>
+                </div>
+
+                <!-- Lista de Coberturas -->
+                <div id="tabCobertura" class="tab-content hidden">
+                    <h2 style="margin-bottom: 1rem;">Coberturas Cadastradas</h2>
+                    <div class="items-grid" id="coberturaList"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -683,132 +629,133 @@
     <div class="modal" id="loginModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="loginTitle">Login</h2>
+                <h2>Login Administrativo</h2>
                 <button class="close-modal" onclick="closeModal('loginModal')">✕</button>
             </div>
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" required>
+                    <label>Usuário</label>
+                    <input type="text" id="loginUser" placeholder="Digite o usuário" required>
                 </div>
                 <div class="form-group">
                     <label>Senha</label>
-                    <input type="password" id="loginPassword" required>
+                    <input type="password" id="loginPassword" placeholder="Digite a senha" required>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
-                <p style="text-align: center; margin-top: 1rem; color: #666;">
-                    Não tem conta? <a href="#" onclick="showRegister()" style="color: #ea1d2c;">Cadastre-se</a>
-                </p>
             </form>
         </div>
     </div>
 
-    <!-- Modal Produto -->
-    <div class="modal" id="productModal">
+    <!-- Modal Item (Adicionar/Editar) -->
+    <div class="modal" id="itemModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="productModalTitle">Adicionar Produto</h2>
-                <button class="close-modal" onclick="closeModal('productModal')">✕</button>
+                <h2 id="itemModalTitle">Adicionar Item</h2>
+                <button class="close-modal" onclick="closeModal('itemModal')">✕</button>
             </div>
-            <form onsubmit="saveProduct(event)">
+            <form onsubmit="saveItem(event)">
                 <div class="form-group">
-                    <label>Nome do Produto</label>
-                    <input type="text" id="productName" required>
+                    <label>Nome</label>
+                    <input type="text" id="itemName" required>
                 </div>
                 <div class="form-group">
                     <label>Descrição</label>
-                    <textarea id="productDescription" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Categoria</label>
-                    <select id="productCategory" required>
-                        <option value="">Selecione...</option>
-                        <option value="Lanches">Lanches</option>
-                        <option value="Bebidas">Bebidas</option>
-                        <option value="Sobremesas">Sobremesas</option>
-                        <option value="Porções">Porções</option>
-                        <option value="Pizzas">Pizzas</option>
-                    </select>
+                    <textarea id="itemDescription" rows="3"></textarea>
                 </div>
                 <div class="form-group">
                     <label>Preço (R$)</label>
-                    <input type="number" id="productPrice" step="0.01" required>
+                    <input type="number" id="itemPrice" step="0.01" required>
                 </div>
                 <div class="form-group">
-                    <label>Imagem do Produto</label>
-                    <input type="file" id="productImage" accept="image/*" onchange="previewImage(event)">
+                    <label>Imagem</label>
+                    <input type="file" id="itemImage" accept="image/*" onchange="previewImage(event)">
                     <img id="imagePreview" style="width: 100%; margin-top: 1rem; border-radius: 8px; display: none;">
                 </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="productActive" checked>
-                        Produto Ativo
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-success" style="width: 100%;">Salvar Produto</button>
+                <button type="submit" class="btn btn-success" style="width: 100%;">Salvar</button>
             </form>
-        </div>
-    </div>
-
-    <!-- Carrinho Float -->
-    <div class="cart-float" id="cartFloat" onclick="toggleCart()" style="display: none;">
-        🛒 Carrinho <span class="cart-count" id="cartCount">0</span>
-    </div>
-
-    <!-- Painel Carrinho -->
-    <div class="cart-panel" id="cartPanel">
-        <div class="cart-header">
-            <h2>Seu Carrinho</h2>
-            <button class="close-modal" onclick="toggleCart()">✕</button>
-        </div>
-        <div class="cart-items" id="cartItems"></div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>Total:</span>
-                <span id="cartTotal">R$ 0,00</span>
-            </div>
-            <button class="whatsapp-btn" onclick="sendWhatsApp()">
-                📱 Finalizar pelo WhatsApp
-            </button>
         </div>
     </div>
 
     <script>
-        // Dados iniciais e configuração
+        // Variáveis globais
         let currentUser = null;
-        let currentUserType = null;
-        let products = [];
-        let cart = [];
-        let editingProductId = null;
+        let currentTab = 'massa';
+        let editingItemId = null;
+        
+        let massas = [];
+        let recheios = [];
+        let coberturas = [];
+        
+        let selectedMassa = null;
+        let selectedRecheio = null;
+        let selectedCobertura = null;
+        
         const WHATSAPP_NUMBER = '5561991944143';
 
-        // Carregar dados do localStorage
+        // Carregar dados
         function loadData() {
-            const savedProducts = localStorage.getItem('products');
-            if (savedProducts) {
-                products = JSON.parse(savedProducts);
-            } else {
-                // Produtos de exemplo
-                products = [
+            const savedMassas = localStorage.getItem('massas');
+            const savedRecheios = localStorage.getItem('recheios');
+            const savedCoberturas = localStorage.getItem('coberturas');
+
+            if (savedMassas) massas = JSON.parse(savedMassas);
+            else {
+                massas = [
                     {
                         id: 1,
-                        name: 'X-Burger Clássico',
-                        description: 'Hambúrguer, queijo, alface, tomate e molho especial',
-                        category: 'Lanches',
-                        price: 25.90,
-                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f39c12" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍔%3C/text%3E%3C/svg%3E',
-                        active: true,
-                        promotion: null
+                        name: 'Massa de Chocolate',
+                        description: 'Massa fofinha de chocolate belga',
+                        price: 25.00,
+                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%238B4513" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E'
                     },
                     {
                         id: 2,
-                        name: 'Refrigerante 2L',
-                        description: 'Coca-Cola, Guaraná ou Fanta',
-                        category: 'Bebidas',
-                        price: 8.50,
-                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%233498db" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🥤%3C/text%3E%3C/svg%3E',
-                        active: true,
-                        promotion: { discount: 10, validUntil: '2025-12-31' }
+                        name: 'Massa de Baunilha',
+                        description: 'Massa clássica de baunilha',
+                        price: 20.00,
+                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23F5DEB3" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍰%3C/text%3E%3C/svg%3E'
+                    }
+                ];
+                saveData();
+            }
+
+            if (savedRecheios) recheios = JSON.parse(savedRecheios);
+            else {
+                recheios = [
+                    {
+                        id: 1,
+                        name: 'Brigadeiro',
+                        description: 'Cremoso brigadeiro gourmet',
+                        price: 15.00,
+                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%234B3621" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E'
+                    },
+                    {
+                        id: 2,
+                        name: 'Doce de Leite',
+                        description: 'Doce de leite cremoso argentino',
+                        price: 12.00,
+                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23D2691E" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍯%3C/text%3E%3C/svg%3E'
+                    }
+                ];
+                saveData();
+            }
+
+            if (savedCoberturas) coberturas = JSON.parse(savedCoberturas);
+            else {
+                coberturas = [
+                    {
+                        id: 1,
+                        name: 'Ganache de Chocolate',
+                        description: 'Cobertura de chocolate meio amargo',
+                        price: 18.00,
+                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%233B2F2F" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E'
+                    },
+                    {
+                        id: 2,
+                        name: 'Chantilly',
+                        description: 'Chantilly tradicional decorado',
+                        price: 15.00,
+                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23FFFAF0" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="gray" font-size="80"%3E☁️%3C/text%3E%3C/svg%3E'
                     }
                 ];
                 saveData();
@@ -816,92 +763,70 @@
         }
 
         function saveData() {
-            localStorage.setItem('products', JSON.stringify(products));
+            localStorage.setItem('massas', JSON.stringify(massas));
+            localStorage.setItem('recheios', JSON.stringify(recheios));
+            localStorage.setItem('coberturas', JSON.stringify(coberturas));
         }
 
         // Navegação
         function showHome() {
-            document.getElementById('homePage').classList.remove('hidden');
-            document.getElementById('clientPage').classList.add('hidden');
+            document.getElementById('clientPage').classList.remove('hidden');
             document.getElementById('storePage').classList.add('hidden');
-            document.getElementById('cartFloat').style.display = 'none';
             currentUser = null;
-            currentUserType = null;
             updateNavButtons();
+            renderClientOptions();
         }
 
-        function showLogin(type) {
-            currentUserType = type;
-            
-            // Se for cliente, acessa direto sem login
-            if (type === 'client') {
-                currentUser = { email: 'cliente', type: 'client' };
-                showClientPage();
-            } else {
-                // Se for loja, abre o modal de login
-                document.getElementById('loginTitle').textContent = 'Login Loja';
-                document.getElementById('loginModal').classList.add('active');
-            }
+        function showClientPage() {
+            document.getElementById('clientPage').classList.remove('hidden');
+            document.getElementById('storePage').classList.add('hidden');
+            updateNavButtons();
+            renderClientOptions();
         }
 
-        function showRegister() {
-            alert('Para acessar como loja, use:\nLogin: fafa\nSenha: 1050');
+        function showLogin() {
+            document.getElementById('loginModal').classList.add('active');
         }
 
         function handleLogin(event) {
             event.preventDefault();
-            const email = document.getElementById('loginEmail').value;
+            const user = document.getElementById('loginUser').value;
             const password = document.getElementById('loginPassword').value;
 
-            // Validação de login da loja
-            if (email.toLowerCase() === 'fafa' && password === '1050') {
-                currentUser = { email: 'fafa', type: 'store' };
+            if (user.toLowerCase() === 'fafa' && password === '1050') {
+                currentUser = { user: 'fafa' };
                 closeModal('loginModal');
                 showStorePage();
             } else {
-                alert('Login ou senha incorretos!\n\nPara acessar como loja, use:\nLogin: fafa\nSenha: 1050');
+                alert('Usuário ou senha incorretos!\n\nUse:\nUsuário: fafa\nSenha: 1050');
             }
         }
 
-        function showClientPage() {
-            document.getElementById('homePage').classList.add('hidden');
-            document.getElementById('clientPage').classList.remove('hidden');
-            document.getElementById('storePage').classList.add('hidden');
-            document.getElementById('cartFloat').style.display = 'flex';
-            updateNavButtons();
-            renderProducts();
-        }
-
         function showStorePage() {
-            document.getElementById('homePage').classList.add('hidden');
             document.getElementById('clientPage').classList.add('hidden');
             document.getElementById('storePage').classList.remove('hidden');
             updateNavButtons();
-            renderStoreProducts();
-            updateStats();
+            renderAdminItems();
         }
 
         function updateNavButtons() {
             const navButtons = document.getElementById('navButtons');
             if (currentUser) {
                 navButtons.innerHTML = `
-                    <span style="color: white; margin-right: 1rem;">
-                        ${currentUser.type === 'client' ? '👤' : '🏪'} ${currentUser.email}
+                    <span style="color: #764ba2; margin-right: 1rem; font-weight: 600;">
+                        🏪 ${currentUser.user}
                     </span>
                     <button class="btn btn-secondary" onclick="logout()">Sair</button>
                 `;
             } else {
                 navButtons.innerHTML = `
-                    <button class="btn btn-primary" onclick="showHome()">Início</button>
+                    <button class="btn btn-secondary" onclick="showLogin()">🔐 Admin</button>
                 `;
             }
         }
 
         function logout() {
             currentUser = null;
-            currentUserType = null;
-            cart = [];
-            updateCartDisplay();
             showHome();
         }
 
@@ -909,184 +834,162 @@
             document.getElementById(modalId).classList.remove('active');
         }
 
-        // Produtos - Área do Cliente
-        function renderProducts() {
-            const grid = document.getElementById('productsGrid');
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const activeCategory = document.querySelector('.category-btn.active').textContent.replace(/[^\w\s]/gi, '').trim();
-            
-            let filtered = products.filter(p => p.active);
-            
-            if (activeCategory !== 'Todos') {
-                filtered = filtered.filter(p => p.category === activeCategory);
-            }
-            
-            if (searchTerm) {
-                filtered = filtered.filter(p => 
-                    p.name.toLowerCase().includes(searchTerm) || 
-                    p.description.toLowerCase().includes(searchTerm)
-                );
-            }
-
-            grid.innerHTML = filtered.map(product => {
-                const finalPrice = product.promotion 
-                    ? product.price * (1 - product.promotion.discount / 100)
-                    : product.price;
-
-                return `
-                    <div class="product-card" onclick="addToCart(${product.id})">
-                        <img src="${product.image}" alt="${product.name}" class="product-image">
-                        <div class="product-info">
-                            <div class="product-name">${product.name}</div>
-                            <div class="product-description">${product.description}</div>
-                            ${product.promotion ? `
-                                <div class="product-promotion">
-                                    🏷️ ${product.promotion.discount}% OFF
-                                </div>
-                                <div class="product-price">
-                                    <span style="text-decoration: line-through; font-size: 0.9rem; color: #999;">
-                                        R$ ${product.price.toFixed(2)}
-                                    </span>
-                                    <br>
-                                    R$ ${finalPrice.toFixed(2)}
-                                </div>
-                            ` : `
-                                <div class="product-price">R$ ${product.price.toFixed(2)}</div>
-                            `}
-                            <button class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
-                                Adicionar ao Carrinho
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function filterProducts() {
-            renderProducts();
-        }
-
-        function filterByCategory(category) {
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.includes(category) || (category === 'Todos' && btn.textContent === 'Todos')) {
-                    btn.classList.add('active');
+        // Cliente - Steps
+        function showStep(step) {
+            // Atualizar steps visuais
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.step').forEach((s, i) => {
+                if ((step === 'massa' && i === 0) || 
+                    (step === 'recheio' && i === 1) || 
+                    (step === 'cobertura' && i === 2)) {
+                    s.classList.add('active');
                 }
             });
-            renderProducts();
-        }
 
-        // Carrinho
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-
-            const existingItem = cart.find(item => item.id === productId);
+            // Mostrar conteúdo correspondente
+            document.getElementById('stepMassa').classList.add('hidden');
+            document.getElementById('stepRecheio').classList.add('hidden');
+            document.getElementById('stepCobertura').classList.add('hidden');
             
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                const finalPrice = product.promotion 
-                    ? product.price * (1 - product.promotion.discount / 100)
-                    : product.price;
-                
-                cart.push({
-                    id: product.id,
-                    name: product.name,
-                    price: finalPrice,
-                    image: product.image,
-                    quantity: 1
-                });
-            }
-            
-            updateCartDisplay();
+            if (step === 'massa') document.getElementById('stepMassa').classList.remove('hidden');
+            if (step === 'recheio') document.getElementById('stepRecheio').classList.remove('hidden');
+            if (step === 'cobertura') document.getElementById('stepCobertura').classList.remove('hidden');
         }
 
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCartDisplay();
+        function renderClientOptions() {
+            renderMassaOptions();
+            renderRecheioOptions();
+            renderCoberturaOptions();
+            updateSummary();
         }
 
-        function updateQuantity(productId, change) {
-            const item = cart.find(item => item.id === productId);
-            if (!item) return;
-
-            item.quantity += change;
-            
-            if (item.quantity <= 0) {
-                removeFromCart(productId);
-            } else {
-                updateCartDisplay();
-            }
-        }
-
-        function updateCartDisplay() {
-            const cartItems = document.getElementById('cartItems');
-            const cartCount = document.getElementById('cartCount');
-            const cartTotal = document.getElementById('cartTotal');
-            const cartFloat = document.getElementById('cartFloat');
-
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-            cartCount.textContent = totalItems;
-            cartTotal.textContent = `R$ ${totalPrice.toFixed(2)}`;
-
-            if (totalItems > 0) {
-                cartFloat.style.display = 'flex';
-            } else {
-                cartFloat.style.display = 'none';
-            }
-
-            if (cart.length === 0) {
-                cartItems.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: #999;">
-                        <div style="font-size: 4rem; margin-bottom: 1rem;">🛒</div>
-                        <p>Seu carrinho está vazio</p>
+        function renderMassaOptions() {
+            const container = document.getElementById('massaOptions');
+            if (massas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🍰</div>
+                        <p>Nenhuma massa disponível no momento</p>
                     </div>
                 `;
-            } else {
-                cartItems.innerHTML = cart.map(item => `
-                    <div class="cart-item">
-                        <img src="${item.image}" alt="${item.name}" class="cart-item-image">
-                        <div class="cart-item-info">
-                            <div class="cart-item-name">${item.name}</div>
-                            <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
-                            <div class="cart-item-qty">
-                                <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
-                                <span style="padding: 0 1rem; font-weight: 600;">${item.quantity}</span>
-                                <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
-                                <button class="btn btn-danger" style="margin-left: auto; padding: 0.5rem;" onclick="removeFromCart(${item.id})">
-                                    🗑️
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function toggleCart() {
-            document.getElementById('cartPanel').classList.toggle('active');
-        }
-
-        function sendWhatsApp() {
-            if (cart.length === 0) {
-                alert('Seu carrinho está vazio!');
                 return;
             }
 
-            let message = '🛒 *Novo Pedido - DeliveryApp*\n\n';
-            
-            cart.forEach(item => {
-                message += `▪️ ${item.quantity}x ${item.name}\n`;
-                message += `   R$ ${item.price.toFixed(2)} cada\n`;
-                message += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`;
-            });
+            container.innerHTML = massas.map(massa => `
+                <div class="option-card ${selectedMassa?.id === massa.id ? 'selected' : ''}" 
+                     onclick="selectMassa(${massa.id})">
+                    <img src="${massa.image}" alt="${massa.name}" class="option-icon" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;">
+                    <div class="option-name">${massa.name}</div>
+                    <div class="option-price">R$ ${massa.price.toFixed(2)}</div>
+                    ${massa.description ? `<div class="option-description">${massa.description}</div>` : ''}
+                </div>
+            `).join('');
+        }
 
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            message += `💰 *Total: R$ ${total.toFixed(2)}*\n\n`;
-            message += '📍 Por favor, envie seu endereço para entrega!';
+        function renderRecheioOptions() {
+            const container = document.getElementById('recheioOptions');
+            if (recheios.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🍓</div>
+                        <p>Nenhum recheio disponível no momento</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = recheios.map(recheio => `
+                <div class="option-card ${selectedRecheio?.id === recheio.id ? 'selected' : ''}" 
+                     onclick="selectRecheio(${recheio.id})">
+                    <img src="${recheio.image}" alt="${recheio.name}" class="option-icon" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;">
+                    <div class="option-name">${recheio.name}</div>
+                    <div class="option-price">R$ ${recheio.price.toFixed(2)}</div>
+                    ${recheio.description ? `<div class="option-description">${recheio.description}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function renderCoberturaOptions() {
+            const container = document.getElementById('coberturaOptions');
+            if (coberturas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🎨</div>
+                        <p>Nenhuma cobertura disponível no momento</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = coberturas.map(cobertura => `
+                <div class="option-card ${selectedCobertura?.id === cobertura.id ? 'selected' : ''}" 
+                     onclick="selectCobertura(${cobertura.id})">
+                    <img src="${cobertura.image}" alt="${cobertura.name}" class="option-icon" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;">
+                    <div class="option-name">${cobertura.name}</div>
+                    <div class="option-price">R$ ${cobertura.price.toFixed(2)}</div>
+                    ${cobertura.description ? `<div class="option-description">${cobertura.description}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function selectMassa(id) {
+            selectedMassa = massas.find(m => m.id === id);
+            renderMassaOptions();
+            updateSummary();
+            showStep('recheio');
+        }
+
+        function selectRecheio(id) {
+            selectedRecheio = recheios.find(r => r.id === id);
+            renderRecheioOptions();
+            updateSummary();
+            showStep('cobertura');
+        }
+
+        function selectCobertura(id) {
+            selectedCobertura = coberturas.find(c => c.id === id);
+            renderCoberturaOptions();
+            updateSummary();
+        }
+
+        function updateSummary() {
+            document.getElementById('selectedMassa').textContent = selectedMassa ? `${selectedMassa.name} - R$ ${selectedMassa.price.toFixed(2)}` : '-';
+            document.getElementById('selectedRecheio').textContent = selectedRecheio ? `${selectedRecheio.name} - R$ ${selectedRecheio.price.toFixed(2)}` : '-';
+            document.getElementById('selectedCobertura').textContent = selectedCobertura ? `${selectedCobertura.name} - R$ ${selectedCobertura.price.toFixed(2)}` : '-';
+
+            const total = (selectedMassa?.price || 0) + (selectedRecheio?.price || 0) + (selectedCobertura?.price || 0);
+            document.getElementById('totalPrice').textContent = `R$ ${total.toFixed(2)}`;
+
+            const finishBtn = document.getElementById('finishBtn');
+            if (selectedMassa && selectedRecheio && selectedCobertura) {
+                finishBtn.disabled = false;
+            } else {
+                finishBtn.disabled = true;
+            }
+        }
+
+        function sendWhatsApp() {
+            if (!selectedMassa || !selectedRecheio || !selectedCobertura) {
+                alert('Por favor, complete todas as etapas do seu bolo!');
+                return;
+            }
+
+            const total = selectedMassa.price + selectedRecheio.price + selectedCobertura.price;
+
+            let message = '🎂 *Novo Pedido - Confeitaria Fafa*\n\n';
+            message += '*MEU BOLO PERSONALIZADO:*\n\n';
+            message += `🍰 *Massa:* ${selectedMassa.name}\n`;
+            message += `   R$ ${selectedMassa.price.toFixed(2)}\n\n`;
+            message += `🍓 *Recheio:* ${selectedRecheio.name}\n`;
+            message += `   R$ ${selectedRecheio.price.toFixed(2)}\n\n`;
+            message += `🎨 *Cobertura:* ${selectedCobertura.name}\n`;
+            message += `   R$ ${selectedCobertura.price.toFixed(2)}\n\n`;
+            message += `━━━━━━━━━━━━━━━━━━\n`;
+            message += `💰 *VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
+            message += '📝 Por favor, confirme os detalhes e informe:\n';
+            message += '• Seu nome completo\n';
+            message += '• Data de entrega desejada\n';
+            message += '• Observações adicionais';
 
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
@@ -1094,35 +997,145 @@
             window.open(whatsappUrl, '_blank');
         }
 
-        // Área da Loja
-        function showProductForm(productId = null) {
-            editingProductId = productId;
+        // Admin - Tabs
+        function showTab(tab) {
+            currentTab = tab;
             
-            if (productId) {
-                const product = products.find(p => p.id === productId);
-                if (product) {
-                    document.getElementById('productModalTitle').textContent = 'Editar Produto';
-                    document.getElementById('productName').value = product.name;
-                    document.getElementById('productDescription').value = product.description;
-                    document.getElementById('productCategory').value = product.category;
-                    document.getElementById('productPrice').value = product.price;
-                    document.getElementById('productActive').checked = product.active;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+            
+            if (tab === 'massa') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('tabMassa').classList.remove('hidden');
+            } else if (tab === 'recheio') {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('tabRecheio').classList.remove('hidden');
+            } else if (tab === 'cobertura') {
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.getElementById('tabCobertura').classList.remove('hidden');
+            }
+            
+            renderAdminItems();
+        }
+
+        function renderAdminItems() {
+            renderAdminMassas();
+            renderAdminRecheios();
+            renderAdminCoberturas();
+        }
+
+        function renderAdminMassas() {
+            const container = document.getElementById('massaList');
+            if (massas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🍰</div>
+                        <p>Nenhuma massa cadastrada</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = massas.map(massa => `
+                <div class="item-card">
+                    <img src="${massa.image}" alt="${massa.name}" class="item-image">
+                    <div class="item-info">
+                        <div class="item-name">${massa.name}</div>
+                        <div class="item-price">R$ ${massa.price.toFixed(2)}</div>
+                        ${massa.description ? `<p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">${massa.description}</p>` : ''}
+                    </div>
+                    <div class="item-actions">
+                        <button class="icon-btn btn-warning" onclick="editItem('massa', ${massa.id})">✏️</button>
+                        <button class="icon-btn btn-danger" onclick="deleteItem('massa', ${massa.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminRecheios() {
+            const container = document.getElementById('recheioList');
+            if (recheios.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🍓</div>
+                        <p>Nenhum recheio cadastrado</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = recheios.map(recheio => `
+                <div class="item-card">
+                    <img src="${recheio.image}" alt="${recheio.name}" class="item-image">
+                    <div class="item-info">
+                        <div class="item-name">${recheio.name}</div>
+                        <div class="item-price">R$ ${recheio.price.toFixed(2)}</div>
+                        ${recheio.description ? `<p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">${recheio.description}</p>` : ''}
+                    </div>
+                    <div class="item-actions">
+                        <button class="icon-btn btn-warning" onclick="editItem('recheio', ${recheio.id})">✏️</button>
+                        <button class="icon-btn btn-danger" onclick="deleteItem('recheio', ${recheio.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminCoberturas() {
+            const container = document.getElementById('coberturaList');
+            if (coberturas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🎨</div>
+                        <p>Nenhuma cobertura cadastrada</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = coberturas.map(cobertura => `
+                <div class="item-card">
+                    <img src="${cobertura.image}" alt="${cobertura.name}" class="item-image">
+                    <div class="item-info">
+                        <div class="item-name">${cobertura.name}</div>
+                        <div class="item-price">R$ ${cobertura.price.toFixed(2)}</div>
+                        ${cobertura.description ? `<p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">${cobertura.description}</p>` : ''}
+                    </div>
+                    <div class="item-actions">
+                        <button class="icon-btn btn-warning" onclick="editItem('cobertura', ${cobertura.id})">✏️</button>
+                        <button class="icon-btn btn-danger" onclick="deleteItem('cobertura', ${cobertura.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showItemForm(type = null, id = null) {
+            editingItemId = id;
+            
+            if (id) {
+                let item;
+                if (currentTab === 'massa') item = massas.find(m => m.id === id);
+                if (currentTab === 'recheio') item = recheios.find(r => r.id === id);
+                if (currentTab === 'cobertura') item = coberturas.find(c => c.id === id);
+                
+                if (item) {
+                    document.getElementById('itemModalTitle').textContent = 'Editar Item';
+                    document.getElementById('itemName').value = item.name;
+                    document.getElementById('itemDescription').value = item.description || '';
+                    document.getElementById('itemPrice').value = item.price;
                     
                     const preview = document.getElementById('imagePreview');
-                    preview.src = product.image;
+                    preview.src = item.image;
                     preview.style.display = 'block';
                 }
             } else {
-                document.getElementById('productModalTitle').textContent = 'Novo Produto';
-                document.getElementById('productName').value = '';
-                document.getElementById('productDescription').value = '';
-                document.getElementById('productCategory').value = '';
-                document.getElementById('productPrice').value = '';
-                document.getElementById('productActive').checked = true;
+                document.getElementById('itemModalTitle').textContent = 'Adicionar Item';
+                document.getElementById('itemName').value = '';
+                document.getElementById('itemDescription').value = '';
+                document.getElementById('itemPrice').value = '';
                 document.getElementById('imagePreview').style.display = 'none';
             }
             
-            document.getElementById('productModal').classList.add('active');
+            document.getElementById('itemModal').classList.add('active');
         }
 
         function previewImage(event) {
@@ -1138,46 +1151,68 @@
             }
         }
 
-        function saveProduct(event) {
+        function saveItem(event) {
             event.preventDefault();
             
-            const name = document.getElementById('productName').value;
-            const description = document.getElementById('productDescription').value;
-            const category = document.getElementById('productCategory').value;
-            const price = parseFloat(document.getElementById('productPrice').value);
-            const active = document.getElementById('productActive').checked;
-            const imageFile = document.getElementById('productImage').files[0];
+            const name = document.getElementById('itemName').value;
+            const description = document.getElementById('itemDescription').value;
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            const imageFile = document.getElementById('itemImage').files[0];
             
-            const processProduct = (imageData) => {
-                if (editingProductId) {
-                    const index = products.findIndex(p => p.id === editingProductId);
-                    products[index] = {
-                        ...products[index],
-                        name,
-                        description,
-                        category,
-                        price,
-                        active,
-                        image: imageData || products[index].image
-                    };
+            const processItem = (imageData) => {
+                const defaultImages = {
+                    massa: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23F5DEB3" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍰%3C/text%3E%3C/svg%3E',
+                    recheio: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23FF69B4" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍓%3C/text%3E%3C/svg%3E',
+                    cobertura: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%238B4513" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🎨%3C/text%3E%3C/svg%3E'
+                };
+
+                if (editingItemId) {
+                    if (currentTab === 'massa') {
+                        const index = massas.findIndex(m => m.id === editingItemId);
+                        massas[index] = {
+                            ...massas[index],
+                            name,
+                            description,
+                            price,
+                            image: imageData || massas[index].image
+                        };
+                    } else if (currentTab === 'recheio') {
+                        const index = recheios.findIndex(r => r.id === editingItemId);
+                        recheios[index] = {
+                            ...recheios[index],
+                            name,
+                            description,
+                            price,
+                            image: imageData || recheios[index].image
+                        };
+                    } else if (currentTab === 'cobertura') {
+                        const index = coberturas.findIndex(c => c.id === editingItemId);
+                        coberturas[index] = {
+                            ...coberturas[index],
+                            name,
+                            description,
+                            price,
+                            image: imageData || coberturas[index].image
+                        };
+                    }
                 } else {
-                    const newProduct = {
+                    const newItem = {
                         id: Date.now(),
                         name,
                         description,
-                        category,
                         price,
-                        active,
-                        image: imageData || `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23ddd" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E📦%3C/text%3E%3C/svg%3E`,
-                        promotion: null
+                        image: imageData || defaultImages[currentTab]
                     };
-                    products.push(newProduct);
+                    
+                    if (currentTab === 'massa') massas.push(newItem);
+                    if (currentTab === 'recheio') recheios.push(newItem);
+                    if (currentTab === 'cobertura') coberturas.push(newItem);
                 }
                 
                 saveData();
-                closeModal('productModal');
-                renderStoreProducts();
-                updateStats();
+                closeModal('itemModal');
+                renderAdminItems();
+                renderClientOptions();
                 
                 event.target.reset();
                 document.getElementById('imagePreview').style.display = 'none';
@@ -1186,100 +1221,37 @@
             if (imageFile) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    processProduct(e.target.result);
+                    processItem(e.target.result);
                 };
                 reader.readAsDataURL(imageFile);
             } else {
-                processProduct(null);
+                processItem(null);
             }
         }
 
-        function deleteProduct(productId) {
-            if (confirm('Tem certeza que deseja excluir este produto?')) {
-                products = products.filter(p => p.id !== productId);
-                saveData();
-                renderStoreProducts();
-                updateStats();
-            }
+        function editItem(type, id) {
+            showItemForm(type, id);
         }
 
-        function toggleProductStatus(productId) {
-            const product = products.find(p => p.id === productId);
-            if (product) {
-                product.active = !product.active;
-                saveData();
-                renderStoreProducts();
-                updateStats();
-            }
-        }
-
-        function renderStoreProducts() {
-            const tbody = document.getElementById('productsTableBody');
+        function deleteItem(type, id) {
+            if (!confirm('Tem certeza que deseja excluir este item?')) return;
             
-            if (products.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 2rem; color: #999;">
-                            Nenhum produto cadastrado. Clique em "Novo Produto" para começar.
-                        </td>
-                    </tr>
-                `;
-                return;
+            if (type === 'massa') {
+                massas = massas.filter(m => m.id !== id);
+            } else if (type === 'recheio') {
+                recheios = recheios.filter(r => r.id !== id);
+            } else if (type === 'cobertura') {
+                coberturas = coberturas.filter(c => c.id !== id);
             }
-
-            tbody.innerHTML = products.map(product => `
-                <tr>
-                    <td>
-                        <img src="${product.image}" alt="${product.name}" 
-                             style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
-                    </td>
-                    <td>${product.name}</td>
-                    <td>${product.category}</td>
-                    <td>R$ ${product.price.toFixed(2)}</td>
-                    <td>
-                        <span class="badge ${product.active ? 'badge-success' : 'badge-danger'}">
-                            ${product.active ? 'Ativo' : 'Inativo'}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="icon-btn btn-warning" onclick="showProductForm(${product.id})" title="Editar">
-                                ✏️
-                            </button>
-                            <button class="icon-btn ${product.active ? 'btn-warning' : 'btn-success'}" 
-                                    onclick="toggleProductStatus(${product.id})" 
-                                    title="${product.active ? 'Desativar' : 'Ativar'}">
-                                ${product.active ? '🔒' : '🔓'}
-                            </button>
-                            <button class="icon-btn btn-danger" onclick="deleteProduct(${product.id})" title="Excluir">
-                                🗑️
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function updateStats() {
-            const total = products.length;
-            const active = products.filter(p => p.active).length;
-            const promotions = products.filter(p => p.promotion).length;
-
-            document.getElementById('totalProducts').textContent = total;
-            document.getElementById('activeProducts').textContent = active;
-            document.getElementById('totalPromotions').textContent = promotions;
-        }
-
-        function showPromotions() {
-            alert('Funcionalidade de promoções em desenvolvimento!\n\nEm breve você poderá:\n• Criar promoções por dia e hora\n• Definir descontos automáticos\n• Agendar ofertas especiais');
-        }
-
-        function showStats() {
-            alert('Funcionalidade de estatísticas em desenvolvimento!\n\nEm breve você terá acesso a:\n• Vendas do dia/mês\n• Produtos mais vendidos\n• Relatórios detalhados\n• Gráficos de desempenho');
+            
+            saveData();
+            renderAdminItems();
+            renderClientOptions();
         }
 
         // Inicializar
         loadData();
+        showClientPage(); // Inicia direto na área do cliente
         
         // Fechar modais clicando fora
         window.onclick = function(event) {
