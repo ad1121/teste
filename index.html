@@ -2,171 +2,295 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monte seu Bolo - Confeitaria</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Monte seu Bolo - Confeitaria Fafa</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #ea1d2c 0%, #c41e3a 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f8f8;
             min-height: 100vh;
+            padding-bottom: 80px;
         }
 
-        /* Header */
         .header {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            color: #ea1d2c;
-            padding: 1rem 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            background: #fff;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
         .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ea1d2c;
         }
 
-        .nav-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.6rem 1.2rem;
+        .btn-admin {
+            padding: 0.5rem 1rem;
+            background: #ea1d2c;
+            color: white;
             border: none;
             border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .btn-primary {
+        .container {
+            padding: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .progress-bar {
+            background: #fff;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 18px;
+            left: 40px;
+            right: 40px;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background: #ea1d2c;
+            transition: width 0.3s;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: #999;
+            transition: all 0.3s;
+        }
+
+        .progress-step.active .step-circle {
             background: #ea1d2c;
             color: white;
         }
 
-        .btn-primary:hover {
-            background: #c41e3a;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(234, 29, 44, 0.3);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: #ea1d2c;
-            border: 2px solid #ea1d2c;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(234, 29, 44, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
+        .progress-step.completed .step-circle {
             background: #00a65a;
             color: white;
         }
 
-        .btn-danger {
-            background: #dc3545;
-            color: white;
+        .step-label {
+            font-size: 0.75rem;
+            color: #666;
+            font-weight: 500;
         }
 
-        .btn-warning {
-            background: #f39c12;
-            color: white;
+        .progress-step.active .step-label {
+            color: #ea1d2c;
+            font-weight: 600;
         }
 
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        /* Página Inicial */
-        .home-hero {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-
-        .home-hero h1 {
-            font-size: 2.5rem;
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
             color: #333;
             margin-bottom: 1rem;
         }
 
-        .home-hero p {
-            font-size: 1.2rem;
-            color: #666;
-            margin-bottom: 2rem;
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
-        .access-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .access-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            text-align: center;
+        .option-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
-        .access-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        .option-item:active {
+            transform: scale(0.98);
         }
 
-        .access-card-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+        .option-item.selected {
+            border-color: #ea1d2c;
+            background: #fff5f5;
         }
 
-        /* Modal */
+        .option-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .option-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .option-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .option-description {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-price {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #ea1d2c;
+        }
+
+        .option-radio {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .option-item.selected .option-radio {
+            border-color: #ea1d2c;
+            background: #ea1d2c;
+        }
+
+        .option-item.selected .option-radio::after {
+            content: '✓';
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 1rem;
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
+            z-index: 99;
+        }
+
+        .bottom-content {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .total-info {
+            flex: 1;
+        }
+
+        .total-label {
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .btn-continue {
+            padding: 1rem 2rem;
+            background: #ea1d2c;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .btn-continue:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-continue:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
         .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
             background: rgba(0,0,0,0.5);
             z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-end;
         }
 
         .modal.active {
@@ -174,13 +298,18 @@
         }
 
         .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 500px;
+            background: #fff;
+            border-radius: 20px 20px 0 0;
+            padding: 1.5rem;
+            width: 100%;
             max-height: 90vh;
             overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
 
         .modal-header {
@@ -190,12 +319,63 @@
             margin-bottom: 1.5rem;
         }
 
-        .close-modal {
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .close-btn {
             background: none;
             border: none;
             font-size: 1.5rem;
-            cursor: pointer;
             color: #666;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .summary-item {
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .summary-label {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+
+        .summary-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .payment-notice {
+            background: #fff3cd;
+            border-left: 4px solid #f39c12;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-size: 0.875rem;
+            color: #856404;
+        }
+
+        .btn-whatsapp {
+            width: 100%;
+            padding: 1rem;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .form-group {
@@ -205,12 +385,11 @@
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
+            font-weight: 600;
             color: #333;
-            font-weight: 500;
         }
 
         .form-group input,
-        .form-group select,
         .form-group textarea {
             width: 100%;
             padding: 0.75rem;
@@ -219,313 +398,41 @@
             font-size: 1rem;
         }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #764ba2;
-        }
-
-        /* Área do Cliente - Montagem */
-        .cake-builder {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-        }
-
-        .builder-title {
-            text-align: center;
-            font-size: 2rem;
-            background: linear-gradient(135deg, #ea1d2c 0%, #c41e3a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 2rem;
-            font-weight: 800;
-        }
-
-        .builder-steps {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 3rem;
-            gap: 0.5rem;
-            overflow-x: auto;
-            padding: 0.5rem;
-        }
-
-        .step {
-            flex: 0 0 auto;
-            text-align: center;
-            padding: 0.75rem 1.5rem;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            min-width: 120px;
-            border: 2px solid transparent;
-        }
-
-        .step:hover {
-            transform: translateY(-2px);
-            background: rgba(234, 29, 44, 0.1);
-        }
-
-        .step.active {
-            background: linear-gradient(135deg, #ea1d2c 0%, #c41e3a 100%);
-            color: white;
-            border-color: white;
-            box-shadow: 0 4px 20px rgba(234, 29, 44, 0.4);
-        }
-
-        .step-number {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 0.25rem;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .option-card {
-            background: white;
-            border: 2px solid #f0f0f0;
-            border-radius: 16px;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .option-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(234, 29, 44, 0.1) 0%, rgba(196, 30, 58, 0.1) 100%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .option-card:hover {
-            border-color: #ea1d2c;
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 8px 24px rgba(234, 29, 44, 0.2);
-        }
-
-        .option-card:hover::before {
-            opacity: 1;
-        }
-
-        .option-card.selected {
-            border-color: #ea1d2c;
-            background: linear-gradient(135deg, rgba(234, 29, 44, 0.05) 0%, rgba(196, 30, 58, 0.05) 100%);
-            box-shadow: 0 8px 24px rgba(234, 29, 44, 0.3);
-        }
-
-        .option-card.selected::after {
-            content: '✓';
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: #ea1d2c;
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1rem;
-            box-shadow: 0 2px 8px rgba(234, 29, 44, 0.4);
-        }
-
-        .option-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .option-name {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .option-price {
-            font-size: 1.1rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #ea1d2c 0%, #c41e3a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .option-description {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 0.5rem;
-            line-height: 1.3;
-        }
-
-        /* Resumo do Pedido */
-        .order-summary {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-            position: sticky;
-            top: 100px;
-        }
-
-        .summary-title {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ea1d2c 0%, #c41e3a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 1rem;
-            background: linear-gradient(135deg, rgba(234, 29, 44, 0.05) 0%, rgba(196, 30, 58, 0.05) 100%);
-            border-radius: 12px;
-            margin-bottom: 0.75rem;
-            transition: all 0.3s;
-        }
-
-        .summary-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(234, 29, 44, 0.15);
-        }
-
-        .summary-label {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .summary-value {
-            color: #666;
-            font-weight: 500;
-        }
-
-        .summary-total {
-            border-top: 2px solid #ea1d2c;
-            padding-top: 1rem;
-            margin-top: 1rem;
-        }
-
-        .total-price {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ea1d2c 0%, #c41e3a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-align: center;
-            margin: 1rem 0;
-        }
-
-        .payment-notice {
-            background: linear-gradient(135deg, #fff3cd 0%, #fff8dc 100%);
-            border-left: 4px solid #f39c12;
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            color: #856404;
-            line-height: 1.6;
-        }
-
-        .payment-notice strong {
-            color: #ea1d2c;
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-
-        .whatsapp-btn {
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-            width: 100%;
-            padding: 1.2rem;
-            border: none;
-            border-radius: 16px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
-        }
-
-        .whatsapp-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 28px rgba(37, 211, 102, 0.4);
-        }
-
-        .whatsapp-btn:disabled {
-            background: linear-gradient(135deg, #ccc 0%, #999 100%);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Admin */
         .admin-tabs {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
         }
 
         .tab-btn {
-            padding: 1rem 2rem;
-            background: white;
-            border: 2px solid #764ba2;
+            padding: 0.75rem 1.5rem;
+            background: #fff;
+            border: 2px solid #ddd;
             border-radius: 8px;
-            cursor: pointer;
             font-weight: 600;
-            color: #764ba2;
-            transition: all 0.3s;
+            color: #666;
+            white-space: nowrap;
+            cursor: pointer;
         }
 
         .tab-btn.active {
-            background: linear-gradient(135deg, #ea1d2c 0%, #c41e3a 100%);
+            background: #ea1d2c;
             color: white;
             border-color: #ea1d2c;
         }
 
         .items-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
         .item-card {
-            background: white;
+            background: #fff;
             border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
         .item-image {
@@ -534,229 +441,198 @@
             object-fit: cover;
             border-radius: 8px;
             margin-bottom: 1rem;
-            background: #f0f0f0;
-        }
-
-        .item-info {
-            margin-bottom: 1rem;
-        }
-
-        .item-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .item-price {
-            font-size: 1.3rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #ea1d2c 0%, #c41e3a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .item-actions {
             display: flex;
             gap: 0.5rem;
+            margin-top: 1rem;
         }
 
-        .icon-btn {
+        .btn-edit,
+        .btn-delete {
             flex: 1;
             padding: 0.5rem;
             border: none;
             border-radius: 6px;
+            font-weight: 600;
             cursor: pointer;
+        }
+
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 1rem;
+            background: #00a65a;
+            color: white;
+            border: none;
+            border-radius: 12px;
             font-size: 1rem;
-        }
-
-        /* Layout de 2 colunas */
-        .two-column {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-        }
-
-        @media (max-width: 968px) {
-            .two-column {
-                grid-template-columns: 1fr;
-            }
-
-            .order-summary {
-                position: static;
-            }
+            font-weight: 700;
+            margin-bottom: 1rem;
+            cursor: pointer;
         }
 
         .hidden {
             display: none !important;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #999;
+        .step-content {
+            animation: fadeIn 0.3s;
         }
 
-        .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <div class="logo">
-                🎂 Confeitaria Fafa
-            </div>
-            <div class="nav-buttons" id="navButtons">
-                <button class="btn btn-secondary" onclick="showLogin()">🔐 Admin</button>
-            </div>
+            <div class="logo">🎂 Confeitaria Fafa</div>
+            <button class="btn-admin" onclick="showLogin()" id="adminBtn">🔐 Admin</button>
         </div>
     </header>
 
-    <!-- Container Principal -->
     <div class="container">
-
-        <!-- Área do Cliente -->
-        <div id="clientPage" class="hidden">
-            <div class="two-column">
-                <div>
-                    <div class="cake-builder">
-                        <h1 class="builder-title">Monte seu Bolo Perfeito 🎂</h1>
-                        
-                        <div class="builder-steps">
-                            <div class="step active" onclick="showStep('massa')">
-                                <div class="step-number">1</div>
-                                <div>Massa</div>
-                            </div>
-                            <div class="step" onclick="showStep('recheio')">
-                                <div class="step-number">2</div>
-                                <div>Recheio</div>
-                            </div>
-                            <div class="step" onclick="showStep('cobertura')">
-                                <div class="step-number">3</div>
-                                <div>Cobertura</div>
-                            </div>
-                        </div>
-
-                        <!-- Opções de Massa -->
-                        <div id="stepMassa" class="step-content">
-                            <h2 style="margin-bottom: 1rem;">Escolha a Massa</h2>
-                            <div class="options-grid" id="massaOptions"></div>
-                        </div>
-
-                        <!-- Opções de Recheio -->
-                        <div id="stepRecheio" class="step-content hidden">
-                            <h2 style="margin-bottom: 1rem;">Escolha o Recheio</h2>
-                            <div class="options-grid" id="recheioOptions"></div>
-                        </div>
-
-                        <!-- Opções de Cobertura -->
-                        <div id="stepCobertura" class="step-content hidden">
-                            <h2 style="margin-bottom: 1rem;">Escolha a Cobertura</h2>
-                            <div class="options-grid" id="coberturaOptions"></div>
-                        </div>
+        <div id="clientPage">
+            <div class="progress-bar">
+                <div class="progress-steps">
+                    <div class="progress-line">
+                        <div class="progress-line-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-step active" data-step="massa">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Massa</div>
+                    </div>
+                    <div class="progress-step" data-step="recheio">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Recheio</div>
+                    </div>
+                    <div class="progress-step" data-step="cobertura">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Cobertura</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Resumo do Pedido -->
-                <div>
-                    <div class="order-summary">
-                        <h2 class="summary-title">Seu Bolo Personalizado</h2>
-                        
-                        <div class="summary-item">
-                            <span class="summary-label">🍰 Massa:</span>
-                            <span class="summary-value" id="selectedMassa">-</span>
-                        </div>
-                        
-                        <div class="summary-item">
-                            <span class="summary-label">🍓 Recheio:</span>
-                            <span class="summary-value" id="selectedRecheio">-</span>
-                        </div>
-                        
-                        <div class="summary-item">
-                            <span class="summary-label">🎨 Cobertura:</span>
-                            <span class="summary-value" id="selectedCobertura">-</span>
-                        </div>
+            <div id="stepMassa" class="step-content">
+                <h2 class="section-title">Escolha a Massa</h2>
+                <div class="options-list" id="massaOptions"></div>
+            </div>
 
-                        <div class="summary-total">
-                            <div class="payment-notice">
-                                <strong>⚠️ Atenção Importante!</strong>
-                                Seu pedido só será confirmado mediante o pagamento de <strong>50% do valor total</strong> como sinal. O restante pode ser pago na entrega.
-                            </div>
-                            <div class="total-price" id="totalPrice">R$ 0,00</div>
-                            <button class="whatsapp-btn" id="finishBtn" onclick="sendWhatsApp()" disabled>
-                                📱 Fazer Pedido pelo WhatsApp
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div id="stepRecheio" class="step-content hidden">
+                <h2 class="section-title">Escolha o Recheio</h2>
+                <div class="options-list" id="recheioOptions"></div>
+            </div>
+
+            <div id="stepCobertura" class="step-content hidden">
+                <h2 class="section-title">Escolha a Cobertura</h2>
+                <div class="options-list" id="coberturaOptions"></div>
             </div>
         </div>
 
-        <!-- Área Administrativa -->
-        <div id="storePage" class="hidden">
-            <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-                <div class="admin-tabs">
-                    <button class="tab-btn active" onclick="showTab('massa')">🍰 Massas</button>
-                    <button class="tab-btn" onclick="showTab('recheio')">🍓 Recheios</button>
-                    <button class="tab-btn" onclick="showTab('cobertura')">🎨 Coberturas</button>
-                </div>
-
-                <button class="btn btn-success" style="margin-bottom: 2rem;" onclick="showItemForm()">
-                    ➕ Adicionar Novo Item
-                </button>
-
-                <!-- Lista de Massas -->
-                <div id="tabMassa" class="tab-content">
-                    <h2 style="margin-bottom: 1rem;">Massas Cadastradas</h2>
-                    <div class="items-grid" id="massaList"></div>
-                </div>
-
-                <!-- Lista de Recheios -->
-                <div id="tabRecheio" class="tab-content hidden">
-                    <h2 style="margin-bottom: 1rem;">Recheios Cadastrados</h2>
-                    <div class="items-grid" id="recheioList"></div>
-                </div>
-
-                <!-- Lista de Coberturas -->
-                <div id="tabCobertura" class="tab-content hidden">
-                    <h2 style="margin-bottom: 1rem;">Coberturas Cadastradas</h2>
-                    <div class="items-grid" id="coberturaList"></div>
-                </div>
+        <div id="adminPage" class="hidden">
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="showTab('massa')">🍰 Massas</button>
+                <button class="tab-btn" onclick="showTab('recheio')">🍓 Recheios</button>
+                <button class="tab-btn" onclick="showTab('cobertura')">🎨 Coberturas</button>
             </div>
+
+            <button class="btn-add" onclick="showItemForm()">➕ Adicionar Item</button>
+
+            <div id="tabMassa" class="items-grid"></div>
+            <div id="tabRecheio" class="items-grid hidden"></div>
+            <div id="tabCobertura" class="items-grid hidden"></div>
+
+            <button class="btn-admin" style="width: 100%; margin-top: 1rem;" onclick="logout()">Sair</button>
         </div>
     </div>
 
-    <!-- Modal Login -->
+    <div class="bottom-bar" id="bottomBar">
+        <div class="bottom-content">
+            <div class="total-info">
+                <div class="total-label">Total</div>
+                <div class="total-price" id="totalPrice">R$ 0,00</div>
+            </div>
+            <button class="btn-continue" id="continueBtn" onclick="handleContinue()" disabled>
+                Continuar
+            </button>
+        </div>
+    </div>
+
+    <div class="modal" id="summaryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Resumo do Pedido</h3>
+                <button class="close-btn" onclick="closeModal('summaryModal')">✕</button>
+            </div>
+            
+            <div class="summary-item">
+                <div class="summary-label">🍰 Massa</div>
+                <div class="summary-value" id="summaryMassa">-</div>
+            </div>
+            
+            <div class="summary-item">
+                <div class="summary-label">🍓 Recheio</div>
+                <div class="summary-value" id="summaryRecheio">-</div>
+            </div>
+            
+            <div class="summary-item">
+                <div class="summary-label">🎨 Cobertura</div>
+                <div class="summary-value" id="summaryCobertura">-</div>
+            </div>
+
+            <div class="payment-notice">
+                <strong>⚠️ Importante:</strong> Pagamento de 50% como sinal. O restante na entrega.
+            </div>
+
+            <div style="text-align: center; margin: 1rem 0;">
+                <div style="font-size: 0.875rem; color: #666;">Valor Total</div>
+                <div style="font-size: 2rem; font-weight: 700; color: #ea1d2c;" id="summaryTotal">R$ 0,00</div>
+            </div>
+
+            <button class="btn-whatsapp" onclick="sendWhatsApp()">
+                📱 Fazer Pedido pelo WhatsApp
+            </button>
+        </div>
+    </div>
+
     <div class="modal" id="loginModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Login Administrativo</h2>
-                <button class="close-modal" onclick="closeModal('loginModal')">✕</button>
+                <h3 class="modal-title">Login Admin</h3>
+                <button class="close-btn" onclick="closeModal('loginModal')">✕</button>
             </div>
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label>Usuário</label>
-                    <input type="text" id="loginUser" placeholder="Digite o usuário" required>
+                    <input type="text" id="loginUser" required>
                 </div>
                 <div class="form-group">
                     <label>Senha</label>
-                    <input type="password" id="loginPassword" placeholder="Digite a senha" required>
+                    <input type="password" id="loginPassword" required>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+                <button type="submit" class="btn-whatsapp" style="background: #ea1d2c;">Entrar</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal Item (Adicionar/Editar) -->
     <div class="modal" id="itemModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="itemModalTitle">Adicionar Item</h2>
-                <button class="close-modal" onclick="closeModal('itemModal')">✕</button>
+                <h3 class="modal-title" id="itemModalTitle">Adicionar Item</h3>
+                <button class="close-btn" onclick="closeModal('itemModal')">✕</button>
             </div>
             <form onsubmit="saveItem(event)">
                 <div class="form-group">
@@ -776,15 +652,15 @@
                     <input type="file" id="itemImage" accept="image/*" onchange="previewImage(event)">
                     <img id="imagePreview" style="width: 100%; margin-top: 1rem; border-radius: 8px; display: none;">
                 </div>
-                <button type="submit" class="btn btn-success" style="width: 100%;">Salvar</button>
+                <button type="submit" class="btn-whatsapp" style="background: #00a65a;">Salvar</button>
             </form>
         </div>
     </div>
 
     <script>
-        // Variáveis globais
         let currentUser = null;
         let currentTab = 'massa';
+        let currentStep = 'massa';
         let editingItemId = null;
         
         let massas = [];
@@ -797,74 +673,27 @@
         
         const WHATSAPP_NUMBER = '5561991944143';
 
-        // Carregar dados
         function loadData() {
-            const savedMassas = localStorage.getItem('massas');
-            const savedRecheios = localStorage.getItem('recheios');
-            const savedCoberturas = localStorage.getItem('coberturas');
+            const defaultMassas = [
+                { id: 1, name: 'Chocolate', description: 'Massa fofinha de chocolate belga', price: 25.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%238B4513" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E' },
+                { id: 2, name: 'Baunilha', description: 'Massa clássica de baunilha', price: 20.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23F5DEB3" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍰%3C/text%3E%3C/svg%3E' }
+            ];
+            
+            const defaultRecheios = [
+                { id: 1, name: 'Brigadeiro', description: 'Cremoso brigadeiro gourmet', price: 15.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%234B3621" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E' },
+                { id: 2, name: 'Doce de Leite', description: 'Doce de leite cremoso', price: 12.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23D2691E" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍯%3C/text%3E%3C/svg%3E' }
+            ];
+            
+            const defaultCoberturas = [
+                { id: 1, name: 'Ganache', description: 'Chocolate meio amargo', price: 18.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%233B2F2F" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E' },
+                { id: 2, name: 'Chantilly', description: 'Chantilly tradicional', price: 15.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23FFFAF0" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="gray" font-size="80"%3E☁️%3C/text%3E%3C/svg%3E' }
+            ];
 
-            if (savedMassas) massas = JSON.parse(savedMassas);
-            else {
-                massas = [
-                    {
-                        id: 1,
-                        name: 'Massa de Chocolate',
-                        description: 'Massa fofinha de chocolate belga',
-                        price: 25.00,
-                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%238B4513" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E'
-                    },
-                    {
-                        id: 2,
-                        name: 'Massa de Baunilha',
-                        description: 'Massa clássica de baunilha',
-                        price: 20.00,
-                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23F5DEB3" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍰%3C/text%3E%3C/svg%3E'
-                    }
-                ];
-                saveData();
-            }
-
-            if (savedRecheios) recheios = JSON.parse(savedRecheios);
-            else {
-                recheios = [
-                    {
-                        id: 1,
-                        name: 'Brigadeiro',
-                        description: 'Cremoso brigadeiro gourmet',
-                        price: 15.00,
-                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%234B3621" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E'
-                    },
-                    {
-                        id: 2,
-                        name: 'Doce de Leite',
-                        description: 'Doce de leite cremoso argentino',
-                        price: 12.00,
-                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23D2691E" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍯%3C/text%3E%3C/svg%3E'
-                    }
-                ];
-                saveData();
-            }
-
-            if (savedCoberturas) coberturas = JSON.parse(savedCoberturas);
-            else {
-                coberturas = [
-                    {
-                        id: 1,
-                        name: 'Ganache de Chocolate',
-                        description: 'Cobertura de chocolate meio amargo',
-                        price: 18.00,
-                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%233B2F2F" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E'
-                    },
-                    {
-                        id: 2,
-                        name: 'Chantilly',
-                        description: 'Chantilly tradicional decorado',
-                        price: 15.00,
-                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23FFFAF0" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="gray" font-size="80"%3E☁️%3C/text%3E%3C/svg%3E'
-                    }
-                ];
-                saveData();
-            }
+            massas = JSON.parse(localStorage.getItem('massas')) || defaultMassas;
+            recheios = JSON.parse(localStorage.getItem('recheios')) || defaultRecheios;
+            coberturas = JSON.parse(localStorage.getItem('coberturas')) || defaultCoberturas;
+            
+            saveData();
         }
 
         function saveData() {
@@ -873,212 +702,109 @@
             localStorage.setItem('coberturas', JSON.stringify(coberturas));
         }
 
-        // Navegação
-        function showHome() {
-            document.getElementById('clientPage').classList.remove('hidden');
-            document.getElementById('storePage').classList.add('hidden');
-            currentUser = null;
-            updateNavButtons();
-            renderClientOptions();
-        }
-
-        function showClientPage() {
-            document.getElementById('clientPage').classList.remove('hidden');
-            document.getElementById('storePage').classList.add('hidden');
-            updateNavButtons();
-            renderClientOptions();
-        }
-
-        function showLogin() {
-            document.getElementById('loginModal').classList.add('active');
-        }
-
-        function handleLogin(event) {
-            event.preventDefault();
-            const user = document.getElementById('loginUser').value;
-            const password = document.getElementById('loginPassword').value;
-
-            if (user.toLowerCase() === 'fafa' && password === '1050') {
-                currentUser = { user: 'fafa' };
-                closeModal('loginModal');
-                showStorePage();
-            } else {
-                alert('Usuário ou senha incorretos!\n\nUse:\nUsuário: fafa\nSenha: 1050');
-            }
-        }
-
-        function showStorePage() {
-            document.getElementById('clientPage').classList.add('hidden');
-            document.getElementById('storePage').classList.remove('hidden');
-            updateNavButtons();
-            renderAdminItems();
-        }
-
-        function updateNavButtons() {
-            const navButtons = document.getElementById('navButtons');
-            if (currentUser) {
-                navButtons.innerHTML = `
-                    <span style="color: #ea1d2c; margin-right: 1rem; font-weight: 600;">
-                        🏪 ${currentUser.user}
-                    </span>
-                    <button class="btn btn-secondary" onclick="logout()">Sair</button>
-                `;
-            } else {
-                navButtons.innerHTML = `
-                    <button class="btn btn-secondary" onclick="showLogin()">🔐 Admin</button>
-                `;
-            }
-        }
-
-        function logout() {
-            currentUser = null;
-            showHome();
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        // Cliente - Steps
-        function showStep(step) {
-            // Atualizar steps visuais
-            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.step').forEach((s, i) => {
-                if ((step === 'massa' && i === 0) || 
-                    (step === 'recheio' && i === 1) || 
-                    (step === 'cobertura' && i === 2)) {
-                    s.classList.add('active');
-                }
-            });
-
-            // Mostrar conteúdo correspondente
-            document.getElementById('stepMassa').classList.add('hidden');
-            document.getElementById('stepRecheio').classList.add('hidden');
-            document.getElementById('stepCobertura').classList.add('hidden');
+        function renderOptions(items, containerId, selectFunction) {
+            const container = document.getElementById(containerId);
+            const selected = currentStep === 'massa' ? selectedMassa : 
+                           currentStep === 'recheio' ? selectedRecheio : selectedCobertura;
             
-            if (step === 'massa') document.getElementById('stepMassa').classList.remove('hidden');
-            if (step === 'recheio') document.getElementById('stepRecheio').classList.remove('hidden');
-            if (step === 'cobertura') document.getElementById('stepCobertura').classList.remove('hidden');
-        }
-
-        function renderClientOptions() {
-            renderMassaOptions();
-            renderRecheioOptions();
-            renderCoberturaOptions();
-            updateSummary();
-        }
-
-        function renderMassaOptions() {
-            const container = document.getElementById('massaOptions');
-            if (massas.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🍰</div>
-                        <p>Nenhuma massa disponível no momento</p>
+            container.innerHTML = items.map(item => `
+                <div class="option-item ${selected?.id === item.id ? 'selected' : ''}" 
+                     onclick="${selectFunction}(${item.id})">
+                    <img src="${item.image}" alt="${item.name}" class="option-image">
+                    <div class="option-info">
+                        <div class="option-name">${item.name}</div>
+                        <div class="option-description">${item.description}</div>
+                        <div class="option-price">R$ ${item.price.toFixed(2)}</div>
                     </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = massas.map(massa => `
-                <div class="option-card ${selectedMassa?.id === massa.id ? 'selected' : ''}" 
-                     onclick="selectMassa(${massa.id})">
-                    <img src="${massa.image}" alt="${massa.name}" class="option-icon" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;">
-                    <div class="option-name">${massa.name}</div>
-                    <div class="option-price">R$ ${massa.price.toFixed(2)}</div>
-                    ${massa.description ? `<div class="option-description">${massa.description}</div>` : ''}
-                </div>
-            `).join('');
-        }
-
-        function renderRecheioOptions() {
-            const container = document.getElementById('recheioOptions');
-            if (recheios.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🍓</div>
-                        <p>Nenhum recheio disponível no momento</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = recheios.map(recheio => `
-                <div class="option-card ${selectedRecheio?.id === recheio.id ? 'selected' : ''}" 
-                     onclick="selectRecheio(${recheio.id})">
-                    <img src="${recheio.image}" alt="${recheio.name}" class="option-icon" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;">
-                    <div class="option-name">${recheio.name}</div>
-                    <div class="option-price">R$ ${recheio.price.toFixed(2)}</div>
-                    ${recheio.description ? `<div class="option-description">${recheio.description}</div>` : ''}
-                </div>
-            `).join('');
-        }
-
-        function renderCoberturaOptions() {
-            const container = document.getElementById('coberturaOptions');
-            if (coberturas.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🎨</div>
-                        <p>Nenhuma cobertura disponível no momento</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = coberturas.map(cobertura => `
-                <div class="option-card ${selectedCobertura?.id === cobertura.id ? 'selected' : ''}" 
-                     onclick="selectCobertura(${cobertura.id})">
-                    <img src="${cobertura.image}" alt="${cobertura.name}" class="option-icon" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;">
-                    <div class="option-name">${cobertura.name}</div>
-                    <div class="option-price">R$ ${cobertura.price.toFixed(2)}</div>
-                    ${cobertura.description ? `<div class="option-description">${cobertura.description}</div>` : ''}
+                    <div class="option-radio"></div>
                 </div>
             `).join('');
         }
 
         function selectMassa(id) {
             selectedMassa = massas.find(m => m.id === id);
-            renderMassaOptions();
-            updateSummary();
-            showStep('recheio');
+            renderOptions(massas, 'massaOptions', 'selectMassa');
+            updateBottomBar();
         }
 
         function selectRecheio(id) {
             selectedRecheio = recheios.find(r => r.id === id);
-            renderRecheioOptions();
-            updateSummary();
-            showStep('cobertura');
+            renderOptions(recheios, 'recheioOptions', 'selectRecheio');
+            updateBottomBar();
         }
 
         function selectCobertura(id) {
             selectedCobertura = coberturas.find(c => c.id === id);
-            renderCoberturaOptions();
-            updateSummary();
+            renderOptions(coberturas, 'coberturaOptions', 'selectCobertura');
+            updateBottomBar();
         }
 
-        function updateSummary() {
-            document.getElementById('selectedMassa').textContent = selectedMassa ? `${selectedMassa.name} - R$ ${selectedMassa.price.toFixed(2)}` : '-';
-            document.getElementById('selectedRecheio').textContent = selectedRecheio ? `${selectedRecheio.name} - R$ ${selectedRecheio.price.toFixed(2)}` : '-';
-            document.getElementById('selectedCobertura').textContent = selectedCobertura ? `${selectedCobertura.name} - R$ ${selectedCobertura.price.toFixed(2)}` : '-';
-
+        function updateBottomBar() {
             const total = (selectedMassa?.price || 0) + (selectedRecheio?.price || 0) + (selectedCobertura?.price || 0);
             document.getElementById('totalPrice').textContent = `R$ ${total.toFixed(2)}`;
-
-            const finishBtn = document.getElementById('finishBtn');
-            if (selectedMassa && selectedRecheio && selectedCobertura) {
-                finishBtn.disabled = false;
+            
+            const continueBtn = document.getElementById('continueBtn');
+            if (currentStep === 'massa' && selectedMassa) {
+                continueBtn.disabled = false;
+            } else if (currentStep === 'recheio' && selectedRecheio) {
+                continueBtn.disabled = false;
+            } else if (currentStep === 'cobertura' && selectedCobertura) {
+                continueBtn.disabled = false;
+                continueBtn.textContent = 'Ver Resumo';
             } else {
-                finishBtn.disabled = true;
+                continueBtn.disabled = true;
             }
+        }
+
+        function handleContinue() {
+            if (currentStep === 'massa') {
+                showStepContent('recheio');
+            } else if (currentStep === 'recheio') {
+                showStepContent('cobertura');
+            } else if (currentStep === 'cobertura') {
+                showSummary();
+            }
+        }
+
+        function showStepContent(step) {
+            currentStep = step;
+            
+            document.getElementById('stepMassa').classList.add('hidden');
+            document.getElementById('stepRecheio').classList.add('hidden');
+            document.getElementById('stepCobertura').classList.add('hidden');
+            document.getElementById(`step${step.charAt(0).toUpperCase() + step.slice(1)}`).classList.remove('hidden');
+            
+            const steps = document.querySelectorAll('.progress-step');
+            steps.forEach(s => {
+                s.classList.remove('active', 'completed');
+                const stepName = s.dataset.step;
+                if (stepName === step) {
+                    s.classList.add('active');
+                } else if ((step === 'recheio' && stepName === 'massa') || 
+                          (step === 'cobertura' && (stepName === 'massa' || stepName === 'recheio'))) {
+                    s.classList.add('completed');
+                }
+            });
+            
+            const progress = step === 'massa' ? 0 : step === 'recheio' ? 50 : 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            document.getElementById('continueBtn').textContent = step === 'cobertura' ? 'Ver Resumo' : 'Continuar';
+            updateBottomBar();
+        }
+
+        function showSummary() {
+            document.getElementById('summaryMassa').textContent = `${selectedMassa.name} - R$ ${selectedMassa.price.toFixed(2)}`;
+            document.getElementById('summaryRecheio').textContent = `${selectedRecheio.name} - R$ ${selectedRecheio.price.toFixed(2)}`;
+            document.getElementById('summaryCobertura').textContent = `${selectedCobertura.name} - R$ ${selectedCobertura.price.toFixed(2)}`;
+            
+            const total = selectedMassa.price + selectedRecheio.price + selectedCobertura.price;
+            document.getElementById('summaryTotal').textContent = `R$ ${total.toFixed(2)}`;
+            
+            document.getElementById('summaryModal').classList.add('active');
         }
 
         function sendWhatsApp() {
-            if (!selectedMassa || !selectedRecheio || !selectedCobertura) {
-                alert('Por favor, complete todas as etapas do seu bolo!');
-                return;
-            }
-
             const total = selectedMassa.price + selectedRecheio.price + selectedCobertura.price;
             const sinal = total * 0.5;
 
@@ -1094,24 +820,53 @@
             message += `💰 *VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
             message += `⚠️ *IMPORTANTE:*\n`;
             message += `📌 Sinal de 50%: *R$ ${sinal.toFixed(2)}*\n`;
-            message += `📌 Restante na entrega: R$ ${(total - sinal).toFixed(2)}\n\n`;
-            message += '📝 Por favor, confirme:\n';
-            message += '• Seu nome completo\n';
-            message += '• Data de entrega desejada\n';
-            message += '• Observações adicionais';
+            message += `📌 Restante na entrega: R$ ${(total - sinal).toFixed(2)}`;
 
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
-            
-            window.open(whatsappUrl, '_blank');
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
         }
 
-        // Admin - Tabs
+        function showLogin() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const user = document.getElementById('loginUser').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (user.toLowerCase() === 'fafa' && password === '1050') {
+                currentUser = { user: 'fafa' };
+                closeModal('loginModal');
+                showAdminPage();
+            } else {
+                alert('Usuário ou senha incorretos!');
+            }
+        }
+
+        function showAdminPage() {
+            document.getElementById('clientPage').classList.add('hidden');
+            document.getElementById('adminPage').classList.remove('hidden');
+            document.getElementById('bottomBar').classList.add('hidden');
+            document.getElementById('adminBtn').textContent = '👤 ' + currentUser.user;
+            renderAdminItems();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('clientPage').classList.remove('hidden');
+            document.getElementById('adminPage').classList.add('hidden');
+            document.getElementById('bottomBar').classList.remove('hidden');
+            document.getElementById('adminBtn').textContent = '🔐 Admin';
+        }
+
         function showTab(tab) {
             currentTab = tab;
             
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+            document.getElementById('tabMassa').classList.add('hidden');
+            document.getElementById('tabRecheio').classList.add('hidden');
+            document.getElementById('tabCobertura').classList.add('hidden');
             
             if (tab === 'massa') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
@@ -1128,90 +883,22 @@
         }
 
         function renderAdminItems() {
-            renderAdminMassas();
-            renderAdminRecheios();
-            renderAdminCoberturas();
+            renderAdminList('massa', massas, 'tabMassa');
+            renderAdminList('recheio', recheios, 'tabRecheio');
+            renderAdminList('cobertura', coberturas, 'tabCobertura');
         }
 
-        function renderAdminMassas() {
-            const container = document.getElementById('massaList');
-            if (massas.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🍰</div>
-                        <p>Nenhuma massa cadastrada</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = massas.map(massa => `
+        function renderAdminList(type, items, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = items.map(item => `
                 <div class="item-card">
-                    <img src="${massa.image}" alt="${massa.name}" class="item-image">
-                    <div class="item-info">
-                        <div class="item-name">${massa.name}</div>
-                        <div class="item-price">R$ ${massa.price.toFixed(2)}</div>
-                        ${massa.description ? `<p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">${massa.description}</p>` : ''}
-                    </div>
+                    <img src="${item.image}" alt="${item.name}" class="item-image">
+                    <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">${item.name}</div>
+                    <div style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">${item.description}</div>
+                    <div style="font-size: 1.25rem; font-weight: 700; color: #ea1d2c;">R$ ${item.price.toFixed(2)}</div>
                     <div class="item-actions">
-                        <button class="icon-btn btn-warning" onclick="editItem('massa', ${massa.id})">✏️</button>
-                        <button class="icon-btn btn-danger" onclick="deleteItem('massa', ${massa.id})">🗑️</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderAdminRecheios() {
-            const container = document.getElementById('recheioList');
-            if (recheios.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🍓</div>
-                        <p>Nenhum recheio cadastrado</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = recheios.map(recheio => `
-                <div class="item-card">
-                    <img src="${recheio.image}" alt="${recheio.name}" class="item-image">
-                    <div class="item-info">
-                        <div class="item-name">${recheio.name}</div>
-                        <div class="item-price">R$ ${recheio.price.toFixed(2)}</div>
-                        ${recheio.description ? `<p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">${recheio.description}</p>` : ''}
-                    </div>
-                    <div class="item-actions">
-                        <button class="icon-btn btn-warning" onclick="editItem('recheio', ${recheio.id})">✏️</button>
-                        <button class="icon-btn btn-danger" onclick="deleteItem('recheio', ${recheio.id})">🗑️</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderAdminCoberturas() {
-            const container = document.getElementById('coberturaList');
-            if (coberturas.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🎨</div>
-                        <p>Nenhuma cobertura cadastrada</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = coberturas.map(cobertura => `
-                <div class="item-card">
-                    <img src="${cobertura.image}" alt="${cobertura.name}" class="item-image">
-                    <div class="item-info">
-                        <div class="item-name">${cobertura.name}</div>
-                        <div class="item-price">R$ ${cobertura.price.toFixed(2)}</div>
-                        ${cobertura.description ? `<p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">${cobertura.description}</p>` : ''}
-                    </div>
-                    <div class="item-actions">
-                        <button class="icon-btn btn-warning" onclick="editItem('cobertura', ${cobertura.id})">✏️</button>
-                        <button class="icon-btn btn-danger" onclick="deleteItem('cobertura', ${cobertura.id})">🗑️</button>
+                        <button class="btn-edit" onclick="editItem('${type}', ${item.id})">✏️ Editar</button>
+                        <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})">🗑️ Excluir</button>
                     </div>
                 </div>
             `).join('');
@@ -1278,41 +965,16 @@
                 if (editingItemId) {
                     if (currentTab === 'massa') {
                         const index = massas.findIndex(m => m.id === editingItemId);
-                        massas[index] = {
-                            ...massas[index],
-                            name,
-                            description,
-                            price,
-                            image: imageData || massas[index].image
-                        };
+                        massas[index] = { ...massas[index], name, description, price, image: imageData || massas[index].image };
                     } else if (currentTab === 'recheio') {
                         const index = recheios.findIndex(r => r.id === editingItemId);
-                        recheios[index] = {
-                            ...recheios[index],
-                            name,
-                            description,
-                            price,
-                            image: imageData || recheios[index].image
-                        };
+                        recheios[index] = { ...recheios[index], name, description, price, image: imageData || recheios[index].image };
                     } else if (currentTab === 'cobertura') {
                         const index = coberturas.findIndex(c => c.id === editingItemId);
-                        coberturas[index] = {
-                            ...coberturas[index],
-                            name,
-                            description,
-                            price,
-                            image: imageData || coberturas[index].image
-                        };
+                        coberturas[index] = { ...coberturas[index], name, description, price, image: imageData || coberturas[index].image };
                     }
                 } else {
-                    const newItem = {
-                        id: Date.now(),
-                        name,
-                        description,
-                        price,
-                        image: imageData || defaultImages[currentTab]
-                    };
-                    
+                    const newItem = { id: Date.now(), name, description, price, image: imageData || defaultImages[currentTab] };
                     if (currentTab === 'massa') massas.push(newItem);
                     if (currentTab === 'recheio') recheios.push(newItem);
                     if (currentTab === 'cobertura') coberturas.push(newItem);
@@ -1321,7 +983,9 @@
                 saveData();
                 closeModal('itemModal');
                 renderAdminItems();
-                renderClientOptions();
+                renderOptions(massas, 'massaOptions', 'selectMassa');
+                renderOptions(recheios, 'recheioOptions', 'selectRecheio');
+                renderOptions(coberturas, 'coberturaOptions', 'selectCobertura');
                 
                 event.target.reset();
                 document.getElementById('imagePreview').style.display = 'none';
@@ -1329,9 +993,7 @@
 
             if (imageFile) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    processItem(e.target.result);
-                };
+                reader.onload = function(e) { processItem(e.target.result); };
                 reader.readAsDataURL(imageFile);
             } else {
                 processItem(null);
@@ -1343,31 +1005,33 @@
         }
 
         function deleteItem(type, id) {
-            if (!confirm('Tem certeza que deseja excluir este item?')) return;
+            if (!confirm('Excluir este item?')) return;
             
-            if (type === 'massa') {
-                massas = massas.filter(m => m.id !== id);
-            } else if (type === 'recheio') {
-                recheios = recheios.filter(r => r.id !== id);
-            } else if (type === 'cobertura') {
-                coberturas = coberturas.filter(c => c.id !== id);
-            }
+            if (type === 'massa') massas = massas.filter(m => m.id !== id);
+            else if (type === 'recheio') recheios = recheios.filter(r => r.id !== id);
+            else if (type === 'cobertura') coberturas = coberturas.filter(c => c.id !== id);
             
             saveData();
             renderAdminItems();
-            renderClientOptions();
+            renderOptions(massas, 'massaOptions', 'selectMassa');
+            renderOptions(recheios, 'recheioOptions', 'selectRecheio');
+            renderOptions(coberturas, 'coberturaOptions', 'selectCobertura');
         }
 
-        // Inicializar
-        loadData();
-        showClientPage(); // Inicia direto na área do cliente
-        
-        // Fechar modais clicando fora
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('active');
             }
         };
+
+        loadData();
+        renderOptions(massas, 'massaOptions', 'selectMassa');
+        renderOptions(recheios, 'recheioOptions', 'selectRecheio');
+        renderOptions(coberturas, 'coberturaOptions', 'selectCobertura');
     </script>
 </body>
 </html>
