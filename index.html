@@ -578,19 +578,28 @@
                 <button class="close-btn" onclick="closeModal('summaryModal')">✕</button>
             </div>
             
-            <div class="summary-item">
-                <div class="summary-label">🍰 Massa</div>
-                <div class="summary-value" id="summaryMassa">-</div>
+            <div class="summary-item" onclick="editSelection('massa')" style="cursor: pointer;">
+                <div style="flex: 1;">
+                    <div class="summary-label">🍰 Massa</div>
+                    <div class="summary-value" id="summaryMassa">-</div>
+                </div>
+                <div style="color: #ea1d2c; font-size: 1.25rem;">✏️</div>
             </div>
             
-            <div class="summary-item">
-                <div class="summary-label">🍓 Recheio</div>
-                <div class="summary-value" id="summaryRecheio">-</div>
+            <div class="summary-item" onclick="editSelection('recheio')" style="cursor: pointer;">
+                <div style="flex: 1;">
+                    <div class="summary-label">🍓 Recheio</div>
+                    <div class="summary-value" id="summaryRecheio">-</div>
+                </div>
+                <div style="color: #ea1d2c; font-size: 1.25rem;">✏️</div>
             </div>
             
-            <div class="summary-item">
-                <div class="summary-label">🎨 Cobertura</div>
-                <div class="summary-value" id="summaryCobertura">-</div>
+            <div class="summary-item" onclick="editSelection('cobertura')" style="cursor: pointer;">
+                <div style="flex: 1;">
+                    <div class="summary-label">🎨 Cobertura</div>
+                    <div class="summary-value" id="summaryCobertura">-</div>
+                </div>
+                <div style="color: #ea1d2c; font-size: 1.25rem;">✏️</div>
             </div>
 
             <div class="payment-notice">
