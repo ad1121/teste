@@ -51,6 +51,18 @@
             cursor: pointer;
         }
 
+        .btn-back {
+            background: none;
+            border: none;
+            color: #ea1d2c;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         .container {
             padding: 1rem;
             max-width: 600px;
@@ -132,11 +144,17 @@
             font-weight: 600;
         }
 
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
         .section-title {
             font-size: 1.25rem;
             font-weight: 700;
             color: #333;
-            margin-bottom: 1rem;
         }
 
         .options-list {
@@ -390,7 +408,8 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 0.75rem;
             border: 2px solid #ddd;
@@ -482,6 +501,36 @@
             cursor: pointer;
         }
 
+        .group-section {
+            background: #fff;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .group-name {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .btn-group-action {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
         .hidden {
             display: none !important;
         }
@@ -499,7 +548,7 @@
 <body>
     <header class="header">
         <div class="header-content">
-            <div class="logo">🎂 Confeitaria Fafa</div>
+            <div class="logo">🎂 Fafa Bolos</div>
             <button class="btn-admin" onclick="showLogin()" id="adminBtn">🔐 Admin</button>
         </div>
     </header>
@@ -527,33 +576,44 @@
             </div>
 
             <div id="stepMassa" class="step-content">
-                <h2 class="section-title">Escolha a Massa</h2>
+                <div class="section-header">
+                    <h2 class="section-title">Escolha a Massa</h2>
+                </div>
                 <div class="options-list" id="massaOptions"></div>
             </div>
 
             <div id="stepRecheio" class="step-content hidden">
-                <h2 class="section-title">Escolha o Recheio</h2>
+                <div class="section-header">
+                    <h2 class="section-title">Escolha o Recheio</h2>
+                    <button class="btn-back" onclick="goBack()">← Voltar</button>
+                </div>
                 <div class="options-list" id="recheioOptions"></div>
             </div>
 
             <div id="stepCobertura" class="step-content hidden">
-                <h2 class="section-title">Escolha a Cobertura</h2>
+                <div class="section-header">
+                    <h2 class="section-title">Escolha a Cobertura</h2>
+                    <button class="btn-back" onclick="goBack()">← Voltar</button>
+                </div>
                 <div class="options-list" id="coberturaOptions"></div>
             </div>
         </div>
 
         <div id="adminPage" class="hidden">
             <div class="admin-tabs">
-                <button class="tab-btn active" onclick="showTab('massa')">🍰 Massas</button>
-                <button class="tab-btn" onclick="showTab('recheio')">🍓 Recheios</button>
-                <button class="tab-btn" onclick="showTab('cobertura')">🎨 Coberturas</button>
+                <button class="tab-btn active" onclick="showTab('grupos')">📁 Grupos</button>
+                <button class="tab-btn" onclick="showTab('itens')">🍰 Itens</button>
             </div>
 
-            <button class="btn-add" onclick="showItemForm()">➕ Adicionar Item</button>
+            <div id="tabGrupos">
+                <button class="btn-add" onclick="showGroupForm()">➕ Adicionar Grupo</button>
+                <div id="groupsList"></div>
+            </div>
 
-            <div id="tabMassa" class="items-grid"></div>
-            <div id="tabRecheio" class="items-grid hidden"></div>
-            <div id="tabCobertura" class="items-grid hidden"></div>
+            <div id="tabItens" class="hidden">
+                <button class="btn-add" onclick="showItemForm()">➕ Adicionar Item</button>
+                <div class="items-grid" id="itemsList"></div>
+            </div>
 
             <button class="btn-admin" style="width: 100%; margin-top: 1rem;" onclick="logout()">Sair</button>
         </div>
@@ -578,28 +638,19 @@
                 <button class="close-btn" onclick="closeModal('summaryModal')">✕</button>
             </div>
             
-            <div class="summary-item" onclick="editSelection('massa')" style="cursor: pointer;">
-                <div style="flex: 1;">
-                    <div class="summary-label">🍰 Massa</div>
-                    <div class="summary-value" id="summaryMassa">-</div>
-                </div>
-                <div style="color: #ea1d2c; font-size: 1.25rem;">✏️</div>
+            <div class="summary-item">
+                <div class="summary-label">🍰 Massa</div>
+                <div class="summary-value" id="summaryMassa">-</div>
             </div>
             
-            <div class="summary-item" onclick="editSelection('recheio')" style="cursor: pointer;">
-                <div style="flex: 1;">
-                    <div class="summary-label">🍓 Recheio</div>
-                    <div class="summary-value" id="summaryRecheio">-</div>
-                </div>
-                <div style="color: #ea1d2c; font-size: 1.25rem;">✏️</div>
+            <div class="summary-item">
+                <div class="summary-label">🍓 Recheio</div>
+                <div class="summary-value" id="summaryRecheio">-</div>
             </div>
             
-            <div class="summary-item" onclick="editSelection('cobertura')" style="cursor: pointer;">
-                <div style="flex: 1;">
-                    <div class="summary-label">🎨 Cobertura</div>
-                    <div class="summary-value" id="summaryCobertura">-</div>
-                </div>
-                <div style="color: #ea1d2c; font-size: 1.25rem;">✏️</div>
+            <div class="summary-item">
+                <div class="summary-label">🎨 Cobertura</div>
+                <div class="summary-value" id="summaryCobertura">-</div>
             </div>
 
             <div class="payment-notice">
@@ -637,6 +688,34 @@
         </div>
     </div>
 
+    <div class="modal" id="groupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="groupModalTitle">Adicionar Grupo</h3>
+                <button class="close-btn" onclick="closeModal('groupModal')">✕</button>
+            </div>
+            <form onsubmit="saveGroup(event)">
+                <div class="form-group">
+                    <label>Nome do Grupo</label>
+                    <input type="text" id="groupName" placeholder="Ex: Massas Especiais" required>
+                </div>
+                <div class="form-group">
+                    <label>Ícone (Emoji)</label>
+                    <input type="text" id="groupIcon" placeholder="Ex: 🍰" maxlength="2" required>
+                </div>
+                <div class="form-group">
+                    <label>Ordem de Exibição</label>
+                    <select id="groupOrder" required>
+                        <option value="1">1 - Primeira etapa</option>
+                        <option value="2">2 - Segunda etapa</option>
+                        <option value="3">3 - Terceira etapa</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-whatsapp" style="background: #00a65a;">Salvar</button>
+            </form>
+        </div>
+    </div>
+
     <div class="modal" id="itemModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -644,6 +723,10 @@
                 <button class="close-btn" onclick="closeModal('itemModal')">✕</button>
             </div>
             <form onsubmit="saveItem(event)">
+                <div class="form-group">
+                    <label>Grupo</label>
+                    <select id="itemGroup" required></select>
+                </div>
                 <div class="form-group">
                     <label>Nome</label>
                     <input type="text" id="itemName" required>
@@ -657,9 +740,11 @@
                     <input type="number" id="itemPrice" step="0.01" required>
                 </div>
                 <div class="form-group">
-                    <label>Imagem</label>
-                    <input type="file" id="itemImage" accept="image/*" onchange="previewImage(event)">
-                    <img id="imagePreview" style="width: 100%; margin-top: 1rem; border-radius: 8px; display: none;">
+                    <label>URL da Imagem (GitHub)</label>
+                    <input type="text" id="itemImage" placeholder="Ex: img/chocolate.jpg" required>
+                    <small style="color: #666; display: block; margin-top: 0.5rem;">
+                        Coloque as imagens na pasta "img" do GitHub
+                    </small>
                 </div>
                 <button type="submit" class="btn-whatsapp" style="background: #00a65a;">Salvar</button>
             </form>
@@ -668,58 +753,74 @@
 
     <script>
         let currentUser = null;
-        let currentTab = 'massa';
+        let currentTab = 'grupos';
         let currentStep = 'massa';
+        let editingGroupId = null;
         let editingItemId = null;
         
-        let massas = [];
-        let recheios = [];
-        let coberturas = [];
+        let groups = [];
+        let items = [];
         
-        let selectedMassa = null;
-        let selectedRecheio = null;
-        let selectedCobertura = null;
+        let selections = {};
         
         const WHATSAPP_NUMBER = '5561991944143';
 
         function loadData() {
-            const defaultMassas = [
-                { id: 1, name: 'Chocolate', description: 'Massa fofinha de chocolate belga', price: 25.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%238B4513" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E' },
-                { id: 2, name: 'Baunilha', description: 'Massa clássica de baunilha', price: 20.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23F5DEB3" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍰%3C/text%3E%3C/svg%3E' }
+            const defaultGroups = [
+                { id: 1, name: 'Massas', icon: '🍰', order: 1 },
+                { id: 2, name: 'Recheios', icon: '🍓', order: 2 },
+                { id: 3, name: 'Coberturas', icon: '🎨', order: 3 }
             ];
             
-            const defaultRecheios = [
-                { id: 1, name: 'Brigadeiro', description: 'Cremoso brigadeiro gourmet', price: 15.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%234B3621" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E' },
-                { id: 2, name: 'Doce de Leite', description: 'Doce de leite cremoso', price: 12.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23D2691E" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍯%3C/text%3E%3C/svg%3E' }
-            ];
-            
-            const defaultCoberturas = [
-                { id: 1, name: 'Ganache', description: 'Chocolate meio amargo', price: 18.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%233B2F2F" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍫%3C/text%3E%3C/svg%3E' },
-                { id: 2, name: 'Chantilly', description: 'Chantilly tradicional', price: 15.00, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23FFFAF0" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="gray" font-size="80"%3E☁️%3C/text%3E%3C/svg%3E' }
+            const defaultItems = [
+                { id: 1, groupId: 1, name: 'Chocolate', description: 'Massa fofinha de chocolate belga', price: 25.00, image: 'img/chocolate.jpg' },
+                { id: 2, groupId: 1, name: 'Baunilha', description: 'Massa clássica de baunilha', price: 20.00, image: 'img/baunilha.jpg' },
+                { id: 3, groupId: 2, name: 'Brigadeiro', description: 'Cremoso brigadeiro gourmet', price: 15.00, image: 'img/brigadeiro.jpg' },
+                { id: 4, groupId: 2, name: 'Doce de Leite', description: 'Doce de leite cremoso', price: 12.00, image: 'img/doce-leite.jpg' },
+                { id: 5, groupId: 3, name: 'Ganache', description: 'Chocolate meio amargo', price: 18.00, image: 'img/ganache.jpg' },
+                { id: 6, groupId: 3, name: 'Chantilly', description: 'Chantilly tradicional', price: 15.00, image: 'img/chantilly.jpg' }
             ];
 
-            massas = JSON.parse(localStorage.getItem('massas')) || defaultMassas;
-            recheios = JSON.parse(localStorage.getItem('recheios')) || defaultRecheios;
-            coberturas = JSON.parse(localStorage.getItem('coberturas')) || defaultCoberturas;
+            groups = JSON.parse(localStorage.getItem('groups')) || defaultGroups;
+            items = JSON.parse(localStorage.getItem('items')) || defaultItems;
             
             saveData();
         }
 
         function saveData() {
-            localStorage.setItem('massas', JSON.stringify(massas));
-            localStorage.setItem('recheios', JSON.stringify(recheios));
-            localStorage.setItem('coberturas', JSON.stringify(coberturas));
+            localStorage.setItem('groups', JSON.stringify(groups));
+            localStorage.setItem('items', JSON.stringify(items));
         }
 
-        function renderOptions(items, containerId, selectFunction) {
-            const container = document.getElementById(containerId);
-            const selected = currentStep === 'massa' ? selectedMassa : 
-                           currentStep === 'recheio' ? selectedRecheio : selectedCobertura;
+        function getGroupsByOrder() {
+            return groups.sort((a, b) => a.order - b.order);
+        }
+
+        function getItemsByGroup(groupId) {
+            return items.filter(item => item.groupId === groupId);
+        }
+
+        function renderClientOptions() {
+            const orderedGroups = getGroupsByOrder();
             
-            container.innerHTML = items.map(item => `
+            orderedGroups.forEach((group, index) => {
+                const stepName = index === 0 ? 'massa' : index === 1 ? 'recheio' : 'cobertura';
+                const containerId = `${stepName}Options`;
+                const groupItems = getItemsByGroup(group.id);
+                
+                renderOptions(groupItems, containerId, stepName, group.id);
+            });
+        }
+
+        function renderOptions(itemsList, containerId, stepName, groupId) {
+            const container = document.getElementById(containerId);
+            const selected = selections[groupId];
+            
+            container.innerHTML = itemsList.map(item => `
                 <div class="option-item ${selected?.id === item.id ? 'selected' : ''}" 
-                     onclick="${selectFunction}(${item.id})">
-                    <img src="${item.image}" alt="${item.name}" class="option-image">
+                     onclick="selectItem(${groupId}, ${item.id})">
+                    <img src="${item.image}" alt="${item.name}" class="option-image" 
+                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2260%22%3E🖼️%3C/text%3E%3C/svg%3E'">
                     <div class="option-info">
                         <div class="option-name">${item.name}</div>
                         <div class="option-description">${item.description}</div>
@@ -730,48 +831,65 @@
             `).join('');
         }
 
-        function selectMassa(id) {
-            selectedMassa = massas.find(m => m.id === id);
-            renderOptions(massas, 'massaOptions', 'selectMassa');
-            updateBottomBar();
-        }
-
-        function selectRecheio(id) {
-            selectedRecheio = recheios.find(r => r.id === id);
-            renderOptions(recheios, 'recheioOptions', 'selectRecheio');
-            updateBottomBar();
-        }
-
-        function selectCobertura(id) {
-            selectedCobertura = coberturas.find(c => c.id === id);
-            renderOptions(coberturas, 'coberturaOptions', 'selectCobertura');
+        function selectItem(groupId, itemId) {
+            const item = items.find(i => i.id === itemId);
+            selections[groupId] = item;
+            
+            const group = groups.find(g => g.id === groupId);
+            const stepName = group.order === 1 ? 'massa' : group.order === 2 ? 'recheio' : 'cobertura';
+            const containerId = `${stepName}Options`;
+            
+            renderOptions(getItemsByGroup(groupId), containerId, stepName, groupId);
             updateBottomBar();
         }
 
         function updateBottomBar() {
-            const total = (selectedMassa?.price || 0) + (selectedRecheio?.price || 0) + (selectedCobertura?.price || 0);
+            let total = 0;
+            Object.values(selections).forEach(item => {
+                if (item) total += item.price;
+            });
+            
             document.getElementById('totalPrice').textContent = `R$ ${total.toFixed(2)}`;
             
             const continueBtn = document.getElementById('continueBtn');
-            if (currentStep === 'massa' && selectedMassa) {
+            const currentGroup = getGroupsByOrder()[getCurrentStepIndex()];
+            
+            if (selections[currentGroup.id]) {
                 continueBtn.disabled = false;
-            } else if (currentStep === 'recheio' && selectedRecheio) {
-                continueBtn.disabled = false;
-            } else if (currentStep === 'cobertura' && selectedCobertura) {
-                continueBtn.disabled = false;
-                continueBtn.textContent = 'Ver Resumo';
+                if (getCurrentStepIndex() === getGroupsByOrder().length - 1) {
+                    continueBtn.textContent = 'Ver Resumo';
+                } else {
+                    continueBtn.textContent = 'Continuar';
+                }
             } else {
                 continueBtn.disabled = true;
             }
         }
 
+        function getCurrentStepIndex() {
+            if (currentStep === 'massa') return 0;
+            if (currentStep === 'recheio') return 1;
+            if (currentStep === 'cobertura') return 2;
+            return 0;
+        }
+
         function handleContinue() {
-            if (currentStep === 'massa') {
-                showStepContent('recheio');
-            } else if (currentStep === 'recheio') {
-                showStepContent('cobertura');
-            } else if (currentStep === 'cobertura') {
+            const currentIndex = getCurrentStepIndex();
+            const orderedGroups = getGroupsByOrder();
+            
+            if (currentIndex < orderedGroups.length - 1) {
+                const nextStep = currentIndex === 0 ? 'recheio' : 'cobertura';
+                showStepContent(nextStep);
+            } else {
                 showSummary();
+            }
+        }
+
+        function goBack() {
+            const currentIndex = getCurrentStepIndex();
+            if (currentIndex > 0) {
+                const prevStep = currentIndex === 2 ? 'recheio' : 'massa';
+                showStepContent(prevStep);
             }
         }
 
@@ -798,33 +916,47 @@
             const progress = step === 'massa' ? 0 : step === 'recheio' ? 50 : 100;
             document.getElementById('progressFill').style.width = progress + '%';
             
-            document.getElementById('continueBtn').textContent = step === 'cobertura' ? 'Ver Resumo' : 'Continuar';
             updateBottomBar();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function showSummary() {
-            document.getElementById('summaryMassa').textContent = `${selectedMassa.name} - R$ ${selectedMassa.price.toFixed(2)}`;
-            document.getElementById('summaryRecheio').textContent = `${selectedRecheio.name} - R$ ${selectedRecheio.price.toFixed(2)}`;
-            document.getElementById('summaryCobertura').textContent = `${selectedCobertura.name} - R$ ${selectedCobertura.price.toFixed(2)}`;
+            const orderedGroups = getGroupsByOrder();
             
-            const total = selectedMassa.price + selectedRecheio.price + selectedCobertura.price;
+            document.getElementById('summaryMassa').textContent = selections[orderedGroups[0].id] ? 
+                `${selections[orderedGroups[0].id].name} - R$ ${selections[orderedGroups[0].id].price.toFixed(2)}` : '-';
+            
+            document.getElementById('summaryRecheio').textContent = selections[orderedGroups[1].id] ? 
+                `${selections[orderedGroups[1].id].name} - R$ ${selections[orderedGroups[1].id].price.toFixed(2)}` : '-';
+            
+            document.getElementById('summaryCobertura').textContent = selections[orderedGroups[2].id] ? 
+                `${selections[orderedGroups[2].id].name} - R$ ${selections[orderedGroups[2].id].price.toFixed(2)}` : '-';
+            
+            let total = 0;
+            Object.values(selections).forEach(item => {
+                if (item) total += item.price;
+            });
+            
             document.getElementById('summaryTotal').textContent = `R$ ${total.toFixed(2)}`;
-            
             document.getElementById('summaryModal').classList.add('active');
         }
 
         function sendWhatsApp() {
-            const total = selectedMassa.price + selectedRecheio.price + selectedCobertura.price;
-            const sinal = total * 0.5;
-
+            let total = 0;
             let message = '🎂 *Novo Pedido - Confeitaria Fafa*\n\n';
             message += '*MEU BOLO PERSONALIZADO:*\n\n';
-            message += `🍰 *Massa:* ${selectedMassa.name}\n`;
-            message += `   R$ ${selectedMassa.price.toFixed(2)}\n\n`;
-            message += `🍓 *Recheio:* ${selectedRecheio.name}\n`;
-            message += `   R$ ${selectedRecheio.price.toFixed(2)}\n\n`;
-            message += `🎨 *Cobertura:* ${selectedCobertura.name}\n`;
-            message += `   R$ ${selectedCobertura.price.toFixed(2)}\n\n`;
+            
+            const orderedGroups = getGroupsByOrder();
+            orderedGroups.forEach(group => {
+                const item = selections[group.id];
+                if (item) {
+                    message += `${group.icon} *${group.name}:* ${item.name}\n`;
+                    message += `   R$ ${item.price.toFixed(2)}\n\n`;
+                    total += item.price;
+                }
+            });
+            
+            const sinal = total * 0.5;
             message += `━━━━━━━━━━━━━━━━━━\n`;
             message += `💰 *VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
             message += `⚠️ *IMPORTANTE:*\n`;
@@ -858,7 +990,7 @@
             document.getElementById('adminPage').classList.remove('hidden');
             document.getElementById('bottomBar').classList.add('hidden');
             document.getElementById('adminBtn').textContent = '👤 ' + currentUser.user;
-            renderAdminItems();
+            renderAdminGroups();
         }
 
         function logout() {
@@ -873,158 +1005,193 @@
             currentTab = tab;
             
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('tabMassa').classList.add('hidden');
-            document.getElementById('tabRecheio').classList.add('hidden');
-            document.getElementById('tabCobertura').classList.add('hidden');
             
-            if (tab === 'massa') {
+            if (tab === 'grupos') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('tabMassa').classList.remove('hidden');
-            } else if (tab === 'recheio') {
+                document.getElementById('tabGrupos').classList.remove('hidden');
+                document.getElementById('tabItens').classList.add('hidden');
+                renderAdminGroups();
+            } else if (tab === 'itens') {
                 document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('tabRecheio').classList.remove('hidden');
-            } else if (tab === 'cobertura') {
-                document.querySelectorAll('.tab-btn')[2].classList.add('active');
-                document.getElementById('tabCobertura').classList.remove('hidden');
+                document.getElementById('tabGrupos').classList.add('hidden');
+                document.getElementById('tabItens').classList.remove('hidden');
+                renderAdminItems();
             }
+        }
+
+        function renderAdminGroups() {
+            const container = document.getElementById('groupsList');
+            const orderedGroups = getGroupsByOrder();
             
-            renderAdminItems();
-        }
-
-        function renderAdminItems() {
-            renderAdminList('massa', massas, 'tabMassa');
-            renderAdminList('recheio', recheios, 'tabRecheio');
-            renderAdminList('cobertura', coberturas, 'tabCobertura');
-        }
-
-        function renderAdminList(type, items, containerId) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = items.map(item => `
-                <div class="item-card">
-                    <img src="${item.image}" alt="${item.name}" class="item-image">
-                    <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">${item.name}</div>
-                    <div style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">${item.description}</div>
-                    <div style="font-size: 1.25rem; font-weight: 700; color: #ea1d2c;">R$ ${item.price.toFixed(2)}</div>
-                    <div class="item-actions">
-                        <button class="btn-edit" onclick="editItem('${type}', ${item.id})">✏️ Editar</button>
-                        <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})">🗑️ Excluir</button>
+            container.innerHTML = orderedGroups.map(group => `
+                <div class="group-section">
+                    <div class="group-header">
+                        <div>
+                            <div class="group-name">${group.icon} ${group.name}</div>
+                            <div style="font-size: 0.875rem; color: #666;">Etapa ${group.order}</div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn-group-action btn-edit" onclick="editGroup(${group.id})">✏️</button>
+                            <button class="btn-group-action btn-delete" onclick="deleteGroup(${group.id})">🗑️</button>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.875rem; color: #666;">
+                        ${getItemsByGroup(group.id).length} item(ns) cadastrado(s)
                     </div>
                 </div>
             `).join('');
         }
 
-        function showItemForm(type = null, id = null) {
-            editingItemId = id;
+        function renderAdminItems() {
+            const container = document.getElementById('itemsList');
+            
+            container.innerHTML = items.map(item => {
+                const group = groups.find(g => g.id === item.groupId);
+                return `
+                    <div class="item-card">
+                        <img src="${item.image}" alt="${item.name}" class="item-image"
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2260%22%3E🖼️%3C/text%3E%3C/svg%3E'">
+                        <div style="font-size: 0.75rem; color: #ea1d2c; font-weight: 600; margin-bottom: 0.5rem;">
+                            ${group ? group.icon + ' ' + group.name : 'Sem grupo'}
+                        </div>
+                        <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">${item.name}</div>
+                        <div style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">${item.description}</div>
+                        <div style="font-size: 1.25rem; font-weight: 700; color: #ea1d2c;">R$ ${item.price.toFixed(2)}</div>
+                        <div class="item-actions">
+                            <button class="btn-edit" onclick="editItem(${item.id})">✏️ Editar</button>
+                            <button class="btn-delete" onclick="deleteItem(${item.id})">🗑️ Excluir</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showGroupForm(id = null) {
+            editingGroupId = id;
             
             if (id) {
-                let item;
-                if (currentTab === 'massa') item = massas.find(m => m.id === id);
-                if (currentTab === 'recheio') item = recheios.find(r => r.id === id);
-                if (currentTab === 'cobertura') item = coberturas.find(c => c.id === id);
-                
+                const group = groups.find(g => g.id === id);
+                if (group) {
+                    document.getElementById('groupModalTitle').textContent = 'Editar Grupo';
+                    document.getElementById('groupName').value = group.name;
+                    document.getElementById('groupIcon').value = group.icon;
+                    document.getElementById('groupOrder').value = group.order;
+                }
+            } else {
+                document.getElementById('groupModalTitle').textContent = 'Adicionar Grupo';
+                document.getElementById('groupName').value = '';
+                document.getElementById('groupIcon').value = '';
+                document.getElementById('groupOrder').value = '1';
+            }
+            
+            document.getElementById('groupModal').classList.add('active');
+        }
+
+        function saveGroup(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('groupName').value;
+            const icon = document.getElementById('groupIcon').value;
+            const order = parseInt(document.getElementById('groupOrder').value);
+            
+            if (editingGroupId) {
+                const index = groups.findIndex(g => g.id === editingGroupId);
+                groups[index] = { ...groups[index], name, icon, order };
+            } else {
+                const newGroup = { id: Date.now(), name, icon, order };
+                groups.push(newGroup);
+            }
+            
+            saveData();
+            closeModal('groupModal');
+            renderAdminGroups();
+            renderClientOptions();
+            event.target.reset();
+        }
+
+        function editGroup(id) {
+            showGroupForm(id);
+        }
+
+        function deleteGroup(id) {
+            const groupItems = getItemsByGroup(id);
+            if (groupItems.length > 0) {
+                alert('Não é possível excluir um grupo que possui itens cadastrados!');
+                return;
+            }
+            
+            if (!confirm('Excluir este grupo?')) return;
+            
+            groups = groups.filter(g => g.id !== id);
+            saveData();
+            renderAdminGroups();
+            renderClientOptions();
+        }
+
+        function showItemForm(id = null) {
+            editingItemId = id;
+            
+            const groupSelect = document.getElementById('itemGroup');
+            groupSelect.innerHTML = groups.map(g => 
+                `<option value="${g.id}">${g.icon} ${g.name}</option>`
+            ).join('');
+            
+            if (id) {
+                const item = items.find(i => i.id === id);
                 if (item) {
                     document.getElementById('itemModalTitle').textContent = 'Editar Item';
+                    document.getElementById('itemGroup').value = item.groupId;
                     document.getElementById('itemName').value = item.name;
-                    document.getElementById('itemDescription').value = item.description || '';
+                    document.getElementById('itemDescription').value = item.description;
                     document.getElementById('itemPrice').value = item.price;
-                    
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = item.image;
-                    preview.style.display = 'block';
+                    document.getElementById('itemImage').value = item.image;
                 }
             } else {
                 document.getElementById('itemModalTitle').textContent = 'Adicionar Item';
                 document.getElementById('itemName').value = '';
                 document.getElementById('itemDescription').value = '';
                 document.getElementById('itemPrice').value = '';
-                document.getElementById('imagePreview').style.display = 'none';
+                document.getElementById('itemImage').value = '';
             }
             
             document.getElementById('itemModal').classList.add('active');
         }
 
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
         function saveItem(event) {
             event.preventDefault();
             
+            const groupId = parseInt(document.getElementById('itemGroup').value);
             const name = document.getElementById('itemName').value;
             const description = document.getElementById('itemDescription').value;
             const price = parseFloat(document.getElementById('itemPrice').value);
-            const imageFile = document.getElementById('itemImage').files[0];
+            const image = document.getElementById('itemImage').value;
             
-            const processItem = (imageData) => {
-                const defaultImages = {
-                    massa: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23F5DEB3" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍰%3C/text%3E%3C/svg%3E',
-                    recheio: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23FF69B4" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🍓%3C/text%3E%3C/svg%3E',
-                    cobertura: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%238B4513" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-size="80"%3E🎨%3C/text%3E%3C/svg%3E'
-                };
-
-                if (editingItemId) {
-                    if (currentTab === 'massa') {
-                        const index = massas.findIndex(m => m.id === editingItemId);
-                        massas[index] = { ...massas[index], name, description, price, image: imageData || massas[index].image };
-                    } else if (currentTab === 'recheio') {
-                        const index = recheios.findIndex(r => r.id === editingItemId);
-                        recheios[index] = { ...recheios[index], name, description, price, image: imageData || recheios[index].image };
-                    } else if (currentTab === 'cobertura') {
-                        const index = coberturas.findIndex(c => c.id === editingItemId);
-                        coberturas[index] = { ...coberturas[index], name, description, price, image: imageData || coberturas[index].image };
-                    }
-                } else {
-                    const newItem = { id: Date.now(), name, description, price, image: imageData || defaultImages[currentTab] };
-                    if (currentTab === 'massa') massas.push(newItem);
-                    if (currentTab === 'recheio') recheios.push(newItem);
-                    if (currentTab === 'cobertura') coberturas.push(newItem);
-                }
-                
-                saveData();
-                closeModal('itemModal');
-                renderAdminItems();
-                renderOptions(massas, 'massaOptions', 'selectMassa');
-                renderOptions(recheios, 'recheioOptions', 'selectRecheio');
-                renderOptions(coberturas, 'coberturaOptions', 'selectCobertura');
-                
-                event.target.reset();
-                document.getElementById('imagePreview').style.display = 'none';
-            };
-
-            if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = function(e) { processItem(e.target.result); };
-                reader.readAsDataURL(imageFile);
+            if (editingItemId) {
+                const index = items.findIndex(i => i.id === editingItemId);
+                items[index] = { ...items[index], groupId, name, description, price, image };
             } else {
-                processItem(null);
+                const newItem = { id: Date.now(), groupId, name, description, price, image };
+                items.push(newItem);
             }
-        }
-
-        function editItem(type, id) {
-            showItemForm(type, id);
-        }
-
-        function deleteItem(type, id) {
-            if (!confirm('Excluir este item?')) return;
-            
-            if (type === 'massa') massas = massas.filter(m => m.id !== id);
-            else if (type === 'recheio') recheios = recheios.filter(r => r.id !== id);
-            else if (type === 'cobertura') coberturas = coberturas.filter(c => c.id !== id);
             
             saveData();
+            closeModal('itemModal');
             renderAdminItems();
-            renderOptions(massas, 'massaOptions', 'selectMassa');
-            renderOptions(recheios, 'recheioOptions', 'selectRecheio');
-            renderOptions(coberturas, 'coberturaOptions', 'selectCobertura');
+            renderClientOptions();
+            event.target.reset();
+        }
+
+        function editItem(id) {
+            showItemForm(id);
+        }
+
+        function deleteItem(id) {
+            if (!confirm('Excluir este item?')) return;
+            
+            items = items.filter(i => i.id !== id);
+            saveData();
+            renderAdminItems();
+            renderClientOptions();
         }
 
         function closeModal(modalId) {
@@ -1038,9 +1205,7 @@
         };
 
         loadData();
-        renderOptions(massas, 'massaOptions', 'selectMassa');
-        renderOptions(recheios, 'recheioOptions', 'selectRecheio');
-        renderOptions(coberturas, 'coberturaOptions', 'selectCobertura');
+        renderClientOptions();
     </script>
 </body>
 </html>
