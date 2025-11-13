@@ -543,6 +543,12 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -558,7 +564,6 @@
             <div class="progress-bar">
                 <div class="progress-steps" id="progressSteps"></div>
             </div>
-
             <div id="stepContents"></div>
         </div>
 
@@ -566,6 +571,7 @@
             <div class="admin-tabs">
                 <button class="tab-btn active" onclick="showTab('grupos')">📁 Grupos</button>
                 <button class="tab-btn" onclick="showTab('itens')">🍰 Itens</button>
+                <button class="tab-btn" onclick="showTab('config')">⚙️ Configurações</button>
             </div>
 
             <div id="tabGrupos">
@@ -576,6 +582,53 @@
             <div id="tabItens" class="hidden">
                 <button class="btn-add" onclick="showItemForm()">➕ Adicionar Item</button>
                 <div class="items-grid" id="itemsList"></div>
+            </div>
+
+            <div id="tabConfig" class="hidden">
+                <div class="group-section">
+                    <h3 style="margin-bottom: 1rem; color: #333;">📊 Integração Google Sheets</h3>
+                    
+                    <div class="form-group">
+                        <label>Link da Planilha Publicada</label>
+                        <input type="text" id="sheetUrl" placeholder="Cole o link da planilha aqui">
+                        <small style="color: #666; display: block; margin-top: 0.5rem;">
+                            Publique sua planilha: Arquivo → Compartilhar → Publicar na Web
+                        </small>
+                    </div>
+                    
+                    <button class="btn-add" onclick="saveSheetUrl()">💾 Salvar Link</button>
+                    <button class="btn-admin" style="width: 100%; margin-top: 0.5rem; background: #00a65a;" onclick="syncWithSheet()">
+                        🔄 Sincronizar Agora
+                    </button>
+                    
+                    <div id="syncStatus" style="margin-top: 1rem; padding: 1rem; background: #f8f8f8; border-radius: 8px; display: none;">
+                        <div id="syncMessage"></div>
+                    </div>
+                </div>
+
+                <div class="group-section">
+                    <h3 style="margin-bottom: 1rem; color: #333;">📱 WhatsApp</h3>
+                    
+                    <div class="form-group">
+                        <label>Número do WhatsApp (com DDI)</label>
+                        <input type="text" id="whatsappNumber" placeholder="Ex: 5561991944143" maxlength="13">
+                        <small style="color: #666; display: block; margin-top: 0.5rem;">
+                            Formato: 55 (BR) + DDD + Número (apenas números)
+                        </small>
+                    </div>
+                    
+                    <button class="btn-add" onclick="saveWhatsApp()">💾 Salvar WhatsApp</button>
+                </div>
+
+                <div class="group-section">
+                    <h3 style="margin-bottom: 1rem; color: #333;">🗑️ Dados Locais</h3>
+                    <p style="color: #666; margin-bottom: 1rem; font-size: 0.875rem;">
+                        Os dados são salvos localmente no navegador. Use a planilha para sincronizar entre dispositivos.
+                    </p>
+                    <button class="btn-admin" style="width: 100%; background: #dc3545;" onclick="clearLocalData()">
+                        🗑️ Limpar Dados Locais
+                    </button>
+                </div>
             </div>
 
             <button class="btn-admin" style="width: 100%; margin-top: 1rem;" onclick="logout()">Sair</button>
@@ -601,20 +654,7 @@
                 <button class="close-btn" onclick="closeModal('summaryModal')">✕</button>
             </div>
             
-            <div class="summary-item">
-                <div class="summary-label">🍰 Massa</div>
-                <div class="summary-value" id="summaryMassa">-</div>
-            </div>
-            
-            <div class="summary-item">
-                <div class="summary-label">🍓 Recheio</div>
-                <div class="summary-value" id="summaryRecheio">-</div>
-            </div>
-            
-            <div class="summary-item">
-                <div class="summary-label">🎨 Cobertura</div>
-                <div class="summary-value" id="summaryCobertura">-</div>
-            </div>
+            <div id="summaryItems"></div>
 
             <div class="payment-notice">
                 <strong>⚠️ Importante:</strong> Pagamento de 50% como sinal. O restante na entrega.
@@ -668,11 +708,7 @@
                 </div>
                 <div class="form-group">
                     <label>Ordem de Exibição</label>
-                    <select id="groupOrder" required>
-                        <option value="1">1 - Primeira etapa</option>
-                        <option value="2">2 - Segunda etapa</option>
-                        <option value="3">3 - Terceira etapa</option>
-                    </select>
+                    <input type="number" id="groupOrder" min="1" required>
                 </div>
                 <button type="submit" class="btn-whatsapp" style="background: #00a65a;">Salvar</button>
             </form>
@@ -703,7 +739,7 @@
                     <input type="number" id="itemPrice" step="0.01" required>
                 </div>
                 <div class="form-group">
-                    <label>URL da Imagem (GitHub)</label>
+                    <label>URL da Imagem</label>
                     <input type="text" id="itemImage" placeholder="Ex: img/chocolate.jpg" required>
                     <small style="color: #666; display: block; margin-top: 0.5rem;">
                         Coloque as imagens na pasta "img" do GitHub
@@ -717,35 +753,38 @@
     <script>
         let currentUser = null;
         let currentTab = 'grupos';
-        let currentStep = 'massa';
+        let currentStepIndex = 0;
         let editingGroupId = null;
         let editingItemId = null;
         
         let groups = [];
         let items = [];
-        
         let selections = {};
         
-        const WHATSAPP_NUMBER = '5561991944143';
+        let WHATSAPP_NUMBER = '5561991944143';
+        let SHEET_URL = '';
 
         function loadData() {
             const defaultGroups = [
-                { id: 1, name: 'Massas', icon: '🍰', order: 1 },
-                { id: 2, name: 'Recheios', icon: '🍓', order: 2 },
-                { id: 3, name: 'Coberturas', icon: '🎨', order: 3 }
+                { id: 1, nome: 'Massas', icone: '🍰', ordem: 1 },
+                { id: 2, nome: 'Recheios', icone: '🍓', ordem: 2 },
+                { id: 3, nome: 'Coberturas', icone: '🎨', ordem: 3 }
             ];
             
             const defaultItems = [
-                { id: 1, groupId: 1, name: 'Chocolate', description: 'Massa fofinha de chocolate belga', price: 25.00, image: 'img/chocolate.jpg' },
-                { id: 2, groupId: 1, name: 'Baunilha', description: 'Massa clássica de baunilha', price: 20.00, image: 'img/baunilha.jpg' },
-                { id: 3, groupId: 2, name: 'Brigadeiro', description: 'Cremoso brigadeiro gourmet', price: 15.00, image: 'img/brigadeiro.jpg' },
-                { id: 4, groupId: 2, name: 'Doce de Leite', description: 'Doce de leite cremoso', price: 12.00, image: 'img/doce-leite.jpg' },
-                { id: 5, groupId: 3, name: 'Ganache', description: 'Chocolate meio amargo', price: 18.00, image: 'img/ganache.jpg' },
-                { id: 6, groupId: 3, name: 'Chantilly', description: 'Chantilly tradicional', price: 15.00, image: 'img/chantilly.jpg' }
+                { id: 1, grupoId: 1, nome: 'Chocolate', descricao: 'Massa fofinha de chocolate belga', preco: 25.00, imagem: 'img/chocolate.jpg' },
+                { id: 2, grupoId: 1, nome: 'Baunilha', descricao: 'Massa clássica de baunilha', preco: 20.00, imagem: 'img/baunilha.jpg' },
+                { id: 3, grupoId: 2, nome: 'Brigadeiro', descricao: 'Cremoso brigadeiro gourmet', preco: 15.00, imagem: 'img/brigadeiro.jpg' },
+                { id: 4, grupoId: 2, nome: 'Doce de Leite', descricao: 'Doce de leite cremoso', preco: 12.00, imagem: 'img/doce-leite.jpg' },
+                { id: 5, grupoId: 3, nome: 'Ganache', descricao: 'Chocolate meio amargo', preco: 18.00, imagem: 'img/ganache.jpg' },
+                { id: 6, grupoId: 3, nome: 'Chantilly', descricao: 'Chantilly tradicional', preco: 15.00, imagem: 'img/chantilly.jpg' }
             ];
 
             groups = JSON.parse(localStorage.getItem('groups')) || defaultGroups;
             items = JSON.parse(localStorage.getItem('items')) || defaultItems;
+            
+            SHEET_URL = localStorage.getItem('sheetUrl') || '';
+            WHATSAPP_NUMBER = localStorage.getItem('whatsappNumber') || '5561991944143';
             
             saveData();
         }
@@ -756,70 +795,92 @@
         }
 
         function getGroupsByOrder() {
-            return groups.sort((a, b) => a.order - b.order);
+            return groups.sort((a, b) => a.ordem - b.ordem);
         }
 
         function getItemsByGroup(groupId) {
-            return items.filter(item => item.groupId === groupId);
+            return items.filter(item => item.grupoId === groupId);
         }
 
-        function renderClientOptions() {
+        function buildClientInterface() {
             const orderedGroups = getGroupsByOrder();
+            const progressSteps = document.getElementById('progressSteps');
             
-            orderedGroups.forEach((group, index) => {
-                const stepName = index === 0 ? 'massa' : index === 1 ? 'recheio' : 'cobertura';
-                const containerId = `${stepName}Options`;
-                const groupItems = getItemsByGroup(group.id);
-                
-                renderOptions(groupItems, containerId, stepName, group.id);
-            });
-        }
-
-        function renderOptions(itemsList, containerId, stepName, groupId) {
-            const container = document.getElementById(containerId);
-            const selected = selections[groupId];
-            
-            container.innerHTML = itemsList.map(item => `
-                <div class="option-item ${selected?.id === item.id ? 'selected' : ''}" 
-                     onclick="selectItem(${groupId}, ${item.id})">
-                    <img src="${item.image}" alt="${item.name}" class="option-image" 
-                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2260%22%3E🖼️%3C/text%3E%3C/svg%3E'">
-                    <div class="option-info">
-                        <div class="option-name">${item.name}</div>
-                        <div class="option-description">${item.description}</div>
-                        <div class="option-price">R$ ${item.price.toFixed(2)}</div>
+            progressSteps.innerHTML = `
+                <div class="progress-line">
+                    <div class="progress-line-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                ${orderedGroups.map((group, index) => `
+                    <div class="progress-step ${index === 0 ? 'active' : ''}" data-step="${index}">
+                        <div class="step-circle">${index + 1}</div>
+                        <div class="step-label">${group.nome}</div>
                     </div>
-                    <div class="option-radio"></div>
+                `).join('')}
+            `;
+            
+            const stepContents = document.getElementById('stepContents');
+            stepContents.innerHTML = orderedGroups.map((group, index) => `
+                <div id="step${index}" class="step-content ${index !== 0 ? 'hidden' : ''}">
+                    <div class="section-header">
+                        <h2 class="section-title">Escolha ${group.nome}</h2>
+                        ${index > 0 ? '<button class="btn-back" onclick="goBack()">← Voltar</button>' : ''}
+                    </div>
+                    <div class="options-list" id="options${index}"></div>
                 </div>
             `).join('');
         }
 
-        function selectItem(groupId, itemId) {
+        function renderClientOptions() {
+            const orderedGroups = getGroupsByOrder();
+            orderedGroups.forEach((group, index) => {
+                const groupItems = getItemsByGroup(group.id);
+                renderOptions(groupItems, `options${index}`, index, group.id);
+            });
+        }
+
+        function renderOptions(itemsList, containerId, stepIndex, groupId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const selected = selections[groupId];
+            
+            container.innerHTML = itemsList.length > 0 ? itemsList.map(item => `
+                <div class="option-item ${selected?.id === item.id ? 'selected' : ''}" 
+                     onclick="selectItem(${groupId}, ${item.id}, ${stepIndex})">
+                    <img src="${item.imagem}" alt="${item.nome}" class="option-image" 
+                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2260%22%3E🖼️%3C/text%3E%3C/svg%3E'">
+                    <div class="option-info">
+                        <div class="option-name">${item.nome}</div>
+                        <div class="option-description">${item.descricao}</div>
+                        <div class="option-price">R$ ${item.preco.toFixed(2)}</div>
+                    </div>
+                    <div class="option-radio"></div>
+                </div>
+            `).join('') : '<div class="loading">Nenhum item disponível</div>';
+        }
+
+        function selectItem(groupId, itemId, stepIndex) {
             const item = items.find(i => i.id === itemId);
             selections[groupId] = item;
-            
-            const group = groups.find(g => g.id === groupId);
-            const stepName = group.order === 1 ? 'massa' : group.order === 2 ? 'recheio' : 'cobertura';
-            const containerId = `${stepName}Options`;
-            
-            renderOptions(getItemsByGroup(groupId), containerId, stepName, groupId);
+            renderOptions(getItemsByGroup(groupId), `options${stepIndex}`, stepIndex, groupId);
             updateBottomBar();
         }
 
         function updateBottomBar() {
             let total = 0;
             Object.values(selections).forEach(item => {
-                if (item) total += item.price;
+                if (item) total += item.preco;
             });
             
             document.getElementById('totalPrice').textContent = `R$ ${total.toFixed(2)}`;
             
             const continueBtn = document.getElementById('continueBtn');
-            const currentGroup = getGroupsByOrder()[getCurrentStepIndex()];
+            const orderedGroups = getGroupsByOrder();
+            const currentGroup = orderedGroups[currentStepIndex];
             
-            if (selections[currentGroup.id]) {
+            if (currentGroup && selections[currentGroup.id]) {
                 continueBtn.disabled = false;
-                if (getCurrentStepIndex() === getGroupsByOrder().length - 1) {
+                if (currentStepIndex === orderedGroups.length - 1) {
                     continueBtn.textContent = 'Ver Resumo';
                 } else {
                     continueBtn.textContent = 'Continuar';
@@ -829,55 +890,49 @@
             }
         }
 
-        function getCurrentStepIndex() {
-            if (currentStep === 'massa') return 0;
-            if (currentStep === 'recheio') return 1;
-            if (currentStep === 'cobertura') return 2;
-            return 0;
-        }
-
         function handleContinue() {
-            const currentIndex = getCurrentStepIndex();
             const orderedGroups = getGroupsByOrder();
-            
-            if (currentIndex < orderedGroups.length - 1) {
-                const nextStep = currentIndex === 0 ? 'recheio' : 'cobertura';
-                showStepContent(nextStep);
+            if (currentStepIndex < orderedGroups.length - 1) {
+                currentStepIndex++;
+                showStepContent(currentStepIndex);
             } else {
                 showSummary();
             }
         }
 
         function goBack() {
-            const currentIndex = getCurrentStepIndex();
-            if (currentIndex > 0) {
-                const prevStep = currentIndex === 2 ? 'recheio' : 'massa';
-                showStepContent(prevStep);
+            if (currentStepIndex > 0) {
+                currentStepIndex--;
+                showStepContent(currentStepIndex);
             }
         }
 
-        function showStepContent(step) {
-            currentStep = step;
+        function showStepContent(stepIndex) {
+            currentStepIndex = stepIndex;
+            const orderedGroups = getGroupsByOrder();
             
-            document.getElementById('stepMassa').classList.add('hidden');
-            document.getElementById('stepRecheio').classList.add('hidden');
-            document.getElementById('stepCobertura').classList.add('hidden');
-            document.getElementById(`step${step.charAt(0).toUpperCase() + step.slice(1)}`).classList.remove('hidden');
+            orderedGroups.forEach((group, index) => {
+                const stepElement = document.getElementById(`step${index}`);
+                if (stepElement) {
+                    stepElement.classList.toggle('hidden', index !== stepIndex);
+                }
+            });
             
             const steps = document.querySelectorAll('.progress-step');
-            steps.forEach(s => {
+            steps.forEach((s, index) => {
                 s.classList.remove('active', 'completed');
-                const stepName = s.dataset.step;
-                if (stepName === step) {
+                if (index === stepIndex) {
                     s.classList.add('active');
-                } else if ((step === 'recheio' && stepName === 'massa') || 
-                          (step === 'cobertura' && (stepName === 'massa' || stepName === 'recheio'))) {
+                } else if (index < stepIndex) {
                     s.classList.add('completed');
                 }
             });
             
-            const progress = step === 'massa' ? 0 : step === 'recheio' ? 50 : 100;
-            document.getElementById('progressFill').style.width = progress + '%';
+            const progress = orderedGroups.length > 1 ? (stepIndex / (orderedGroups.length - 1)) * 100 : 0;
+            const progressFill = document.getElementById('progressFill');
+            if (progressFill) {
+                progressFill.style.width = progress + '%';
+            }
             
             updateBottomBar();
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -885,19 +940,21 @@
 
         function showSummary() {
             const orderedGroups = getGroupsByOrder();
+            const summaryItems = document.getElementById('summaryItems');
             
-            document.getElementById('summaryMassa').textContent = selections[orderedGroups[0].id] ? 
-                `${selections[orderedGroups[0].id].name} - R$ ${selections[orderedGroups[0].id].price.toFixed(2)}` : '-';
-            
-            document.getElementById('summaryRecheio').textContent = selections[orderedGroups[1].id] ? 
-                `${selections[orderedGroups[1].id].name} - R$ ${selections[orderedGroups[1].id].price.toFixed(2)}` : '-';
-            
-            document.getElementById('summaryCobertura').textContent = selections[orderedGroups[2].id] ? 
-                `${selections[orderedGroups[2].id].name} - R$ ${selections[orderedGroups[2].id].price.toFixed(2)}` : '-';
+            summaryItems.innerHTML = orderedGroups.map(group => {
+                const item = selections[group.id];
+                return `
+                    <div class="summary-item">
+                        <div class="summary-label">${group.icone} ${group.nome}</div>
+                        <div class="summary-value">${item ? `${item.nome} - R$ ${item.preco.toFixed(2)}` : '-'}</div>
+                    </div>
+                `;
+            }).join('');
             
             let total = 0;
             Object.values(selections).forEach(item => {
-                if (item) total += item.price;
+                if (item) total += item.preco;
             });
             
             document.getElementById('summaryTotal').textContent = `R$ ${total.toFixed(2)}`;
@@ -913,9 +970,9 @@
             orderedGroups.forEach(group => {
                 const item = selections[group.id];
                 if (item) {
-                    message += `${group.icon} *${group.name}:* ${item.name}\n`;
-                    message += `   R$ ${item.price.toFixed(2)}\n\n`;
-                    total += item.price;
+                    message += `${group.icone} *${group.nome}:* ${item.nome}\n`;
+                    message += `   R$ ${item.preco.toFixed(2)}\n\n`;
+                    total += item.preco;
                 }
             });
             
@@ -953,32 +1010,42 @@
             document.getElementById('adminPage').classList.remove('hidden');
             document.getElementById('bottomBar').classList.add('hidden');
             document.getElementById('adminBtn').textContent = '👤 ' + currentUser.user;
+            loadConfigValues();
             renderAdminGroups();
         }
 
         function logout() {
             currentUser = null;
+            currentStepIndex = 0;
+            selections = {};
             document.getElementById('clientPage').classList.remove('hidden');
             document.getElementById('adminPage').classList.add('hidden');
             document.getElementById('bottomBar').classList.remove('hidden');
             document.getElementById('adminBtn').textContent = '🔐 Admin';
+            buildClientInterface();
+            renderClientOptions();
         }
 
         function showTab(tab) {
             currentTab = tab;
             
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tabGrupos').classList.add('hidden');
+            document.getElementById('tabItens').classList.add('hidden');
+            document.getElementById('tabConfig').classList.add('hidden');
             
             if (tab === 'grupos') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('tabGrupos').classList.remove('hidden');
-                document.getElementById('tabItens').classList.add('hidden');
                 renderAdminGroups();
             } else if (tab === 'itens') {
                 document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('tabGrupos').classList.add('hidden');
                 document.getElementById('tabItens').classList.remove('hidden');
                 renderAdminItems();
+            } else if (tab === 'config') {
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.getElementById('tabConfig').classList.remove('hidden');
+                loadConfigValues();
             }
         }
 
@@ -990,8 +1057,8 @@
                 <div class="group-section">
                     <div class="group-header">
                         <div>
-                            <div class="group-name">${group.icon} ${group.name}</div>
-                            <div style="font-size: 0.875rem; color: #666;">Etapa ${group.order}</div>
+                            <div class="group-name">${group.icone} ${group.nome}</div>
+                            <div style="font-size: 0.875rem; color: #666;">Etapa ${group.ordem}</div>
                         </div>
                         <div style="display: flex; gap: 0.5rem;">
                             <button class="btn-group-action btn-edit" onclick="editGroup(${group.id})">✏️</button>
@@ -1009,17 +1076,17 @@
             const container = document.getElementById('itemsList');
             
             container.innerHTML = items.map(item => {
-                const group = groups.find(g => g.id === item.groupId);
+                const group = groups.find(g => g.id === item.grupoId);
                 return `
                     <div class="item-card">
-                        <img src="${item.image}" alt="${item.name}" class="item-image"
+                        <img src="${item.imagem}" alt="${item.nome}" class="item-image"
                              onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2260%22%3E🖼️%3C/text%3E%3C/svg%3E'">
                         <div style="font-size: 0.75rem; color: #ea1d2c; font-weight: 600; margin-bottom: 0.5rem;">
-                            ${group ? group.icon + ' ' + group.name : 'Sem grupo'}
+                            ${group ? group.icone + ' ' + group.nome : 'Sem grupo'}
                         </div>
-                        <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">${item.name}</div>
-                        <div style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">${item.description}</div>
-                        <div style="font-size: 1.25rem; font-weight: 700; color: #ea1d2c;">R$ ${item.price.toFixed(2)}</div>
+                        <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">${item.nome}</div>
+                        <div style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">${item.descricao}</div>
+                        <div style="font-size: 1.25rem; font-weight: 700; color: #ea1d2c;">R$ ${item.preco.toFixed(2)}</div>
                         <div class="item-actions">
                             <button class="btn-edit" onclick="editItem(${item.id})">✏️ Editar</button>
                             <button class="btn-delete" onclick="deleteItem(${item.id})">🗑️ Excluir</button>
@@ -1036,15 +1103,15 @@
                 const group = groups.find(g => g.id === id);
                 if (group) {
                     document.getElementById('groupModalTitle').textContent = 'Editar Grupo';
-                    document.getElementById('groupName').value = group.name;
-                    document.getElementById('groupIcon').value = group.icon;
-                    document.getElementById('groupOrder').value = group.order;
+                    document.getElementById('groupName').value = group.nome;
+                    document.getElementById('groupIcon').value = group.icone;
+                    document.getElementById('groupOrder').value = group.ordem;
                 }
             } else {
                 document.getElementById('groupModalTitle').textContent = 'Adicionar Grupo';
                 document.getElementById('groupName').value = '';
                 document.getElementById('groupIcon').value = '';
-                document.getElementById('groupOrder').value = '1';
+                document.getElementById('groupOrder').value = groups.length + 1;
             }
             
             document.getElementById('groupModal').classList.add('active');
@@ -1053,21 +1120,22 @@
         function saveGroup(event) {
             event.preventDefault();
             
-            const name = document.getElementById('groupName').value;
-            const icon = document.getElementById('groupIcon').value;
-            const order = parseInt(document.getElementById('groupOrder').value);
+            const nome = document.getElementById('groupName').value;
+            const icone = document.getElementById('groupIcon').value;
+            const ordem = parseInt(document.getElementById('groupOrder').value);
             
             if (editingGroupId) {
                 const index = groups.findIndex(g => g.id === editingGroupId);
-                groups[index] = { ...groups[index], name, icon, order };
+                groups[index] = { ...groups[index], nome, icone, ordem };
             } else {
-                const newGroup = { id: Date.now(), name, icon, order };
+                const newGroup = { id: Date.now(), nome, icone, ordem };
                 groups.push(newGroup);
             }
             
             saveData();
             closeModal('groupModal');
             renderAdminGroups();
+            buildClientInterface();
             renderClientOptions();
             event.target.reset();
         }
@@ -1088,6 +1156,7 @@
             groups = groups.filter(g => g.id !== id);
             saveData();
             renderAdminGroups();
+            buildClientInterface();
             renderClientOptions();
         }
 
@@ -1096,18 +1165,18 @@
             
             const groupSelect = document.getElementById('itemGroup');
             groupSelect.innerHTML = groups.map(g => 
-                `<option value="${g.id}">${g.icon} ${g.name}</option>`
+                `<option value="${g.id}">${g.icone} ${g.nome}</option>`
             ).join('');
             
             if (id) {
                 const item = items.find(i => i.id === id);
                 if (item) {
                     document.getElementById('itemModalTitle').textContent = 'Editar Item';
-                    document.getElementById('itemGroup').value = item.groupId;
-                    document.getElementById('itemName').value = item.name;
-                    document.getElementById('itemDescription').value = item.description;
-                    document.getElementById('itemPrice').value = item.price;
-                    document.getElementById('itemImage').value = item.image;
+                    document.getElementById('itemGroup').value = item.grupoId;
+                    document.getElementById('itemName').value = item.nome;
+                    document.getElementById('itemDescription').value = item.descricao;
+                    document.getElementById('itemPrice').value = item.preco;
+                    document.getElementById('itemImage').value = item.imagem;
                 }
             } else {
                 document.getElementById('itemModalTitle').textContent = 'Adicionar Item';
@@ -1123,23 +1192,24 @@
         function saveItem(event) {
             event.preventDefault();
             
-            const groupId = parseInt(document.getElementById('itemGroup').value);
-            const name = document.getElementById('itemName').value;
-            const description = document.getElementById('itemDescription').value;
-            const price = parseFloat(document.getElementById('itemPrice').value);
-            const image = document.getElementById('itemImage').value;
+            const grupoId = parseInt(document.getElementById('itemGroup').value);
+            const nome = document.getElementById('itemName').value;
+            const descricao = document.getElementById('itemDescription').value;
+            const preco = parseFloat(document.getElementById('itemPrice').value);
+            const imagem = document.getElementById('itemImage').value;
             
             if (editingItemId) {
                 const index = items.findIndex(i => i.id === editingItemId);
-                items[index] = { ...items[index], groupId, name, description, price, image };
+                items[index] = { ...items[index], grupoId, nome, descricao, preco, imagem };
             } else {
-                const newItem = { id: Date.now(), groupId, name, description, price, image };
+                const newItem = { id: Date.now(), grupoId, nome, descricao, preco, imagem };
                 items.push(newItem);
             }
             
             saveData();
             closeModal('itemModal');
             renderAdminItems();
+            buildClientInterface();
             renderClientOptions();
             event.target.reset();
         }
@@ -1154,7 +1224,129 @@
             items = items.filter(i => i.id !== id);
             saveData();
             renderAdminItems();
+            buildClientInterface();
             renderClientOptions();
+        }
+
+        function loadConfigValues() {
+            document.getElementById('sheetUrl').value = SHEET_URL;
+            document.getElementById('whatsappNumber').value = WHATSAPP_NUMBER;
+        }
+
+        function saveSheetUrl() {
+            const url = document.getElementById('sheetUrl').value.trim();
+            SHEET_URL = url;
+            localStorage.setItem('sheetUrl', url);
+            showSyncMessage('✅ Link da planilha salvo com sucesso!', 'success');
+        }
+
+        function saveWhatsApp() {
+            const number = document.getElementById('whatsappNumber').value.trim();
+            WHATSAPP_NUMBER = number;
+            localStorage.setItem('whatsappNumber', number);
+            showSyncMessage('✅ Número do WhatsApp salvo com sucesso!', 'success');
+        }
+
+        async function syncWithSheet() {
+            if (!SHEET_URL) {
+                showSyncMessage('❌ Configure o link da planilha primeiro!', 'error');
+                return;
+            }
+
+            showSyncMessage('🔄 Sincronizando...', 'info');
+
+            try {
+                const sheetId = extractSheetId(SHEET_URL);
+                if (!sheetId) {
+                    showSyncMessage('❌ Link inválido! Use o link de publicação da planilha.', 'error');
+                    return;
+                }
+
+                const gruposUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=Grupos`;
+                const itensUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=Itens`;
+
+                const gruposResponse = await fetch(gruposUrl);
+                const gruposText = await gruposResponse.text();
+                const gruposJson = JSON.parse(gruposText.substring(47).slice(0, -2));
+
+                const itensResponse = await fetch(itensUrl);
+                const itensText = await itensResponse.text();
+                const itensJson = JSON.parse(itensText.substring(47).slice(0, -2));
+
+                groups = gruposJson.table.rows.map(row => ({
+                    id: parseInt(row.c[0]?.v || 0),
+                    nome: row.c[1]?.v || '',
+                    icone: row.c[2]?.v || '📦',
+                    ordem: parseInt(row.c[3]?.v || 1)
+                })).filter(g => g.id > 0);
+
+                items = itensJson.table.rows.map(row => ({
+                    id: parseInt(row.c[0]?.v || 0),
+                    grupoId: parseInt(row.c[1]?.v || 0),
+                    nome: row.c[2]?.v || '',
+                    descricao: row.c[3]?.v || '',
+                    preco: parseFloat(row.c[4]?.v || 0),
+                    imagem: row.c[5]?.v || ''
+                })).filter(i => i.id > 0);
+
+                saveData();
+                buildClientInterface();
+                renderClientOptions();
+                renderAdminGroups();
+                renderAdminItems();
+
+                showSyncMessage(`✅ Sincronizado! ${groups.length} grupos e ${items.length} itens carregados.`, 'success');
+            } catch (error) {
+                console.error('Erro na sincronização:', error);
+                showSyncMessage('❌ Erro ao sincronizar. Verifique se a planilha está publicada corretamente.', 'error');
+            }
+        }
+
+        function extractSheetId(url) {
+            const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+            return match ? match[1] : null;
+        }
+
+        function showSyncMessage(message, type) {
+            const status = document.getElementById('syncStatus');
+            const messageEl = document.getElementById('syncMessage');
+            
+            const colors = {
+                success: '#d4edda',
+                error: '#f8d7da',
+                info: '#d1ecf1'
+            };
+
+            status.style.display = 'block';
+            status.style.background = colors[type] || colors.info;
+            messageEl.textContent = message;
+
+            if (type !== 'info') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function clearLocalData() {
+            if (!confirm('⚠️ Isso vai apagar TODOS os dados locais (grupos e itens). Tem certeza?\n\nDica: Sincronize com a planilha antes para não perder nada.')) {
+                return;
+            }
+
+            localStorage.removeItem('groups');
+            localStorage.removeItem('items');
+            
+            groups = [];
+            items = [];
+            selections = {};
+            
+            loadData();
+            buildClientInterface();
+            renderClientOptions();
+            renderAdminGroups();
+            renderAdminItems();
+
+            showSyncMessage('✅ Dados locais limpos. Dados padrão restaurados.', 'success');
         }
 
         function closeModal(modalId) {
@@ -1168,6 +1360,7 @@
         };
 
         loadData();
+        buildClientInterface();
         renderClientOptions();
     </script>
 </body>
