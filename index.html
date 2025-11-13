@@ -549,12 +549,23 @@
             padding: 2rem;
             color: #666;
         }
+
+        .sync-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="header-content">
-            <div class="logo">🎂 Fafa Bolos</div>
+            <div class="logo">🎂 Fafa Bolos <span id="syncBadge" class="sync-badge" style="display:none">✓</span></div>
             <button class="btn-admin" onclick="showLogin()" id="adminBtn">🔐 Admin</button>
         </div>
     </header>
@@ -569,69 +580,44 @@
 
         <div id="adminPage" class="hidden">
             <div class="admin-tabs">
-                <button class="tab-btn active" onclick="showTab('grupos')">📁 Grupos</button>
+                <button class="tab-btn active" onclick="showTab('config')">⚙️ Config</button>
+                <button class="tab-btn" onclick="showTab('grupos')">📁 Grupos</button>
                 <button class="tab-btn" onclick="showTab('itens')">🍰 Itens</button>
-                <button class="tab-btn" onclick="showTab('config')">⚙️ Configurações</button>
             </div>
 
-            <div id="tabGrupos">
-                <button class="btn-add" onclick="showGroupForm()">➕ Adicionar Grupo</button>
-                <div id="groupsList"></div>
-            </div>
-
-            <div id="tabItens" class="hidden">
-                <button class="btn-add" onclick="showItemForm()">➕ Adicionar Item</button>
-                <div class="items-grid" id="itemsList"></div>
-            </div>
-
-            <div id="tabConfig" class="hidden">
+            <div id="tabConfig">
                 <div class="group-section">
-                    <h3 style="margin-bottom: 1rem; color: #333;">📊 Integração Google Sheets</h3>
-                    
-                    <div class="form-group">
-                        <label>Link da Planilha Publicada</label>
-                        <input type="text" id="sheetUrl" placeholder="Cole o link da planilha aqui">
-                        <small style="color: #666; display: block; margin-top: 0.5rem;">
-                            Publique sua planilha: Arquivo → Compartilhar → Publicar na Web
-                        </small>
+                    <h3 style="margin-bottom:1rem;color:#333">🔄 Sincronização Automática</h3>
+                    <div style="background:#d4edda;padding:1rem;border-radius:8px;margin-bottom:1rem;border-left:4px solid #28a745">
+                        <strong>✅ Ativa!</strong><br>
+                        <small style="color:#155724">Os dados sincronizam automaticamente com o Google Sheets sempre que você abre o site.</small>
                     </div>
-                    
-                    <button class="btn-add" onclick="saveSheetUrl()">💾 Salvar Link</button>
-                    <button class="btn-admin" style="width: 100%; margin-top: 0.5rem; background: #00a65a;" onclick="syncWithSheet()">
-                        🔄 Sincronizar Agora
-                    </button>
-                    
-                    <div id="syncStatus" style="margin-top: 1rem; padding: 1rem; background: #f8f8f8; border-radius: 8px; display: none;">
+                    <button class="btn-admin" style="width:100%;background:#00a65a" onclick="syncWithSheet()">🔄 Sincronizar Agora</button>
+                    <div id="syncStatus" style="margin-top:1rem;padding:1rem;background:#f8f8f8;border-radius:8px;display:none">
                         <div id="syncMessage"></div>
                     </div>
                 </div>
 
                 <div class="group-section">
-                    <h3 style="margin-bottom: 1rem; color: #333;">📱 WhatsApp</h3>
-                    
+                    <h3 style="margin-bottom:1rem;color:#333">📱 WhatsApp</h3>
                     <div class="form-group">
-                        <label>Número do WhatsApp (com DDI)</label>
-                        <input type="text" id="whatsappNumber" placeholder="Ex: 5561991944143" maxlength="13">
-                        <small style="color: #666; display: block; margin-top: 0.5rem;">
-                            Formato: 55 (BR) + DDD + Número (apenas números)
-                        </small>
+                        <label>Número (com DDI)</label>
+                        <input type="text" id="whatsappNumber" placeholder="5561991944143" maxlength="13">
+                        <small style="color:#666;display:block;margin-top:0.5rem">Formato: 55 + DDD + Número</small>
                     </div>
-                    
-                    <button class="btn-add" onclick="saveWhatsApp()">💾 Salvar WhatsApp</button>
-                </div>
-
-                <div class="group-section">
-                    <h3 style="margin-bottom: 1rem; color: #333;">🗑️ Dados Locais</h3>
-                    <p style="color: #666; margin-bottom: 1rem; font-size: 0.875rem;">
-                        Os dados são salvos localmente no navegador. Use a planilha para sincronizar entre dispositivos.
-                    </p>
-                    <button class="btn-admin" style="width: 100%; background: #dc3545;" onclick="clearLocalData()">
-                        🗑️ Limpar Dados Locais
-                    </button>
+                    <button class="btn-add" onclick="saveWhatsApp()">💾 Salvar</button>
                 </div>
             </div>
 
-            <button class="btn-admin" style="width: 100%; margin-top: 1rem;" onclick="logout()">Sair</button>
+            <div id="tabGrupos" class="hidden">
+                <div id="groupsList"></div>
+            </div>
+
+            <div id="tabItens" class="hidden">
+                <div class="items-grid" id="itemsList"></div>
+            </div>
+
+            <button class="btn-admin" style="width:100%;margin-top:1rem" onclick="logout()">Sair</button>
         </div>
     </div>
 
@@ -641,9 +627,7 @@
                 <div class="total-label">Total</div>
                 <div class="total-price" id="totalPrice">R$ 0,00</div>
             </div>
-            <button class="btn-continue" id="continueBtn" onclick="handleContinue()" disabled>
-                Continuar
-            </button>
+            <button class="btn-continue" id="continueBtn" onclick="handleContinue()" disabled>Continuar</button>
         </div>
     </div>
 
@@ -653,21 +637,13 @@
                 <h3 class="modal-title">Resumo do Pedido</h3>
                 <button class="close-btn" onclick="closeModal('summaryModal')">✕</button>
             </div>
-            
             <div id="summaryItems"></div>
-
-            <div class="payment-notice">
-                <strong>⚠️ Importante:</strong> Pagamento de 50% como sinal. O restante na entrega.
+            <div class="payment-notice"><strong>⚠️ Importante:</strong> Pagamento de 50% como sinal. O restante na entrega.</div>
+            <div style="text-align:center;margin:1rem 0">
+                <div style="font-size:0.875rem;color:#666">Valor Total</div>
+                <div style="font-size:2rem;font-weight:700;color:#ea1d2c" id="summaryTotal">R$ 0,00</div>
             </div>
-
-            <div style="text-align: center; margin: 1rem 0;">
-                <div style="font-size: 0.875rem; color: #666;">Valor Total</div>
-                <div style="font-size: 2rem; font-weight: 700; color: #ea1d2c;" id="summaryTotal">R$ 0,00</div>
-            </div>
-
-            <button class="btn-whatsapp" onclick="sendWhatsApp()">
-                📱 Fazer Pedido pelo WhatsApp
-            </button>
+            <button class="btn-whatsapp" onclick="sendWhatsApp()">📱 Fazer Pedido pelo WhatsApp</button>
         </div>
     </div>
 
@@ -686,682 +662,321 @@
                     <label>Senha</label>
                     <input type="password" id="loginPassword" required>
                 </div>
-                <button type="submit" class="btn-whatsapp" style="background: #ea1d2c;">Entrar</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal" id="groupModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="groupModalTitle">Adicionar Grupo</h3>
-                <button class="close-btn" onclick="closeModal('groupModal')">✕</button>
-            </div>
-            <form onsubmit="saveGroup(event)">
-                <div class="form-group">
-                    <label>Nome do Grupo</label>
-                    <input type="text" id="groupName" placeholder="Ex: Massas Especiais" required>
+                <div class="form-group" style="display:flex;align-items:center;gap:0.5rem">
+                    <input type="checkbox" id="rememberMe" style="width:auto;margin:0">
+                    <label for="rememberMe" style="margin:0;font-weight:normal;cursor:pointer">Manter conectado</label>
                 </div>
-                <div class="form-group">
-                    <label>Ícone (Emoji)</label>
-                    <input type="text" id="groupIcon" placeholder="Ex: 🍰" maxlength="2" required>
-                </div>
-                <div class="form-group">
-                    <label>Ordem de Exibição</label>
-                    <input type="number" id="groupOrder" min="1" required>
-                </div>
-                <button type="submit" class="btn-whatsapp" style="background: #00a65a;">Salvar</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal" id="itemModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="itemModalTitle">Adicionar Item</h3>
-                <button class="close-btn" onclick="closeModal('itemModal')">✕</button>
-            </div>
-            <form onsubmit="saveItem(event)">
-                <div class="form-group">
-                    <label>Grupo</label>
-                    <select id="itemGroup" required></select>
-                </div>
-                <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" id="itemName" required>
-                </div>
-                <div class="form-group">
-                    <label>Descrição</label>
-                    <textarea id="itemDescription" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Preço (R$)</label>
-                    <input type="number" id="itemPrice" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label>URL da Imagem</label>
-                    <input type="text" id="itemImage" placeholder="Ex: img/chocolate.jpg" required>
-                    <small style="color: #666; display: block; margin-top: 0.5rem;">
-                        Coloque as imagens na pasta "img" do GitHub
-                    </small>
-                </div>
-                <button type="submit" class="btn-whatsapp" style="background: #00a65a;">Salvar</button>
+                <button type="submit" class="btn-whatsapp" style="background:#ea1d2c">Entrar</button>
             </form>
         </div>
     </div>
 
     <script>
-        let currentUser = null;
-        let currentTab = 'grupos';
-        let currentStepIndex = 0;
-        let editingGroupId = null;
-        let editingItemId = null;
-        
-        let groups = [];
-        let items = [];
-        let selections = {};
-        
-        let WHATSAPP_NUMBER = '5561991944143';
-        let SHEET_URL = '';
+        let currentUser=null,currentTab='config',currentStepIndex=0;
+        let groups=[],items=[],selections={};
+        let WHATSAPP_NUMBER='5561991944143';
+        const SHEET_URL='https://docs.google.com/spreadsheets/d/1sY4UdcXWEmLS-dvgKibR6s9TdFUdU_24L5qm0fuP2So/edit';
 
-        function loadData() {
-            const defaultGroups = [
-                { id: 1, nome: 'Massas', icone: '🍰', ordem: 1 },
-                { id: 2, nome: 'Recheios', icone: '🍓', ordem: 2 },
-                { id: 3, nome: 'Coberturas', icone: '🎨', ordem: 3 }
-            ];
-            
-            const defaultItems = [
-                { id: 1, grupoId: 1, nome: 'Chocolate', descricao: 'Massa fofinha de chocolate belga', preco: 25.00, imagem: 'img/chocolate.jpg' },
-                { id: 2, grupoId: 1, nome: 'Baunilha', descricao: 'Massa clássica de baunilha', preco: 20.00, imagem: 'img/baunilha.jpg' },
-                { id: 3, grupoId: 2, nome: 'Brigadeiro', descricao: 'Cremoso brigadeiro gourmet', preco: 15.00, imagem: 'img/brigadeiro.jpg' },
-                { id: 4, grupoId: 2, nome: 'Doce de Leite', descricao: 'Doce de leite cremoso', preco: 12.00, imagem: 'img/doce-leite.jpg' },
-                { id: 5, grupoId: 3, nome: 'Ganache', descricao: 'Chocolate meio amargo', preco: 18.00, imagem: 'img/ganache.jpg' },
-                { id: 6, grupoId: 3, nome: 'Chantilly', descricao: 'Chantilly tradicional', preco: 15.00, imagem: 'img/chantilly.jpg' }
-            ];
-
-            groups = JSON.parse(localStorage.getItem('groups')) || defaultGroups;
-            items = JSON.parse(localStorage.getItem('items')) || defaultItems;
-            
-            SHEET_URL = localStorage.getItem('sheetUrl') || '';
-            WHATSAPP_NUMBER = localStorage.getItem('whatsappNumber') || '5561991944143';
-            
-            saveData();
+        async function loadData(){
+            const synced=await syncWithSheet(true);
+            if(!synced){
+                groups=[{id:1,nome:'Massas',icone:'🍰',ordem:1},{id:2,nome:'Recheios',icone:'🍓',ordem:2},{id:3,nome:'Coberturas',icone:'🎨',ordem:3}];
+                items=[
+                    {id:1,grupoId:1,nome:'Chocolate',descricao:'Massa fofinha',preco:25,imagem:'https://via.placeholder.com/200/8B4513/FFF?text=Chocolate'},
+                    {id:2,grupoId:1,nome:'Baunilha',descricao:'Massa clássica',preco:20,imagem:'https://via.placeholder.com/200/F5DEB3/333?text=Baunilha'},
+                    {id:3,grupoId:2,nome:'Brigadeiro',descricao:'Cremoso',preco:15,imagem:'https://via.placeholder.com/200/4B3621/FFF?text=Brigadeiro'},
+                    {id:4,grupoId:2,nome:'Doce de Leite',descricao:'Cremoso',preco:12,imagem:'https://via.placeholder.com/200/CD853F/FFF?text=Doce'},
+                    {id:5,grupoId:3,nome:'Ganache',descricao:'Chocolate',preco:18,imagem:'https://via.placeholder.com/200/3D2817/FFF?text=Ganache'},
+                    {id:6,grupoId:3,nome:'Chantilly',descricao:'Tradicional',preco:15,imagem:'https://via.placeholder.com/200/FFFACD/333?text=Chantilly'}
+                ];
+            }
+            WHATSAPP_NUMBER=localStorage.getItem('whatsappNumber')||'5561991944143';
         }
 
-        function saveData() {
-            localStorage.setItem('groups', JSON.stringify(groups));
-            localStorage.setItem('items', JSON.stringify(items));
+        function getGroupsByOrder(){return groups.sort((a,b)=>a.ordem-b.ordem)}
+        function getItemsByGroup(gid){return items.filter(i=>i.grupoId===gid)}
+
+        function buildClientInterface(){
+            const og=getGroupsByOrder();
+            const ps=document.getElementById('progressSteps');
+            ps.innerHTML=`<div class="progress-line"><div class="progress-line-fill" id="progressFill" style="width:0%"></div></div>`+
+                og.map((g,i)=>`<div class="progress-step ${i===0?'active':''}" data-step="${i}"><div class="step-circle">${i+1}</div><div class="step-label">${g.nome}</div></div>`).join('');
+            const sc=document.getElementById('stepContents');
+            sc.innerHTML=og.map((g,i)=>`<div id="step${i}" class="step-content ${i!==0?'hidden':''}">
+                <div class="section-header"><h2 class="section-title">Escolha ${g.nome}</h2>${i>0?'<button class="btn-back" onclick="goBack()">← Voltar</button>':''}</div>
+                <div class="options-list" id="options${i}"></div></div>`).join('');
         }
 
-        function getGroupsByOrder() {
-            return groups.sort((a, b) => a.ordem - b.ordem);
+        function renderClientOptions(){
+            getGroupsByOrder().forEach((g,i)=>renderOptions(getItemsByGroup(g.id),`options${i}`,i,g.id));
         }
 
-        function getItemsByGroup(groupId) {
-            return items.filter(item => item.grupoId === groupId);
+        function renderOptions(its,cid,si,gid){
+            const c=document.getElementById(cid);
+            if(!c)return;
+            const sel=selections[gid];
+            c.innerHTML=its.length?its.map(it=>`<div class="option-item ${sel?.id===it.id?'selected':''}" onclick="selectItem(${gid},${it.id},${si})">
+                <img src="${it.imagem}" alt="${it.nome}" class="option-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2260%22%3E🖼️%3C/text%3E%3C/svg%3E'">
+                <div class="option-info"><div class="option-name">${it.nome}</div><div class="option-description">${it.descricao}</div>
+                <div class="option-price">R$ ${it.preco.toFixed(2)}</div></div><div class="option-radio"></div></div>`).join(''):'<div class="loading">Nenhum item</div>';
         }
 
-        function buildClientInterface() {
-            const orderedGroups = getGroupsByOrder();
-            const progressSteps = document.getElementById('progressSteps');
-            
-            progressSteps.innerHTML = `
-                <div class="progress-line">
-                    <div class="progress-line-fill" id="progressFill" style="width: 0%"></div>
-                </div>
-                ${orderedGroups.map((group, index) => `
-                    <div class="progress-step ${index === 0 ? 'active' : ''}" data-step="${index}">
-                        <div class="step-circle">${index + 1}</div>
-                        <div class="step-label">${group.nome}</div>
-                    </div>
-                `).join('')}
-            `;
-            
-            const stepContents = document.getElementById('stepContents');
-            stepContents.innerHTML = orderedGroups.map((group, index) => `
-                <div id="step${index}" class="step-content ${index !== 0 ? 'hidden' : ''}">
-                    <div class="section-header">
-                        <h2 class="section-title">Escolha ${group.nome}</h2>
-                        ${index > 0 ? '<button class="btn-back" onclick="goBack()">← Voltar</button>' : ''}
-                    </div>
-                    <div class="options-list" id="options${index}"></div>
-                </div>
-            `).join('');
-        }
-
-        function renderClientOptions() {
-            const orderedGroups = getGroupsByOrder();
-            orderedGroups.forEach((group, index) => {
-                const groupItems = getItemsByGroup(group.id);
-                renderOptions(groupItems, `options${index}`, index, group.id);
-            });
-        }
-
-        function renderOptions(itemsList, containerId, stepIndex, groupId) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            
-            const selected = selections[groupId];
-            
-            container.innerHTML = itemsList.length > 0 ? itemsList.map(item => `
-                <div class="option-item ${selected?.id === item.id ? 'selected' : ''}" 
-                     onclick="selectItem(${groupId}, ${item.id}, ${stepIndex})">
-                    <img src="${item.imagem}" alt="${item.nome}" class="option-image" 
-                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2260%22%3E🖼️%3C/text%3E%3C/svg%3E'">
-                    <div class="option-info">
-                        <div class="option-name">${item.nome}</div>
-                        <div class="option-description">${item.descricao}</div>
-                        <div class="option-price">R$ ${item.preco.toFixed(2)}</div>
-                    </div>
-                    <div class="option-radio"></div>
-                </div>
-            `).join('') : '<div class="loading">Nenhum item disponível</div>';
-        }
-
-        function selectItem(groupId, itemId, stepIndex) {
-            const item = items.find(i => i.id === itemId);
-            selections[groupId] = item;
-            renderOptions(getItemsByGroup(groupId), `options${stepIndex}`, stepIndex, groupId);
+        function selectItem(gid,iid,si){
+            selections[gid]=items.find(i=>i.id===iid);
+            renderOptions(getItemsByGroup(gid),`options${si}`,si,gid);
             updateBottomBar();
         }
 
-        function updateBottomBar() {
-            let total = 0;
-            Object.values(selections).forEach(item => {
-                if (item) total += item.preco;
-            });
-            
-            document.getElementById('totalPrice').textContent = `R$ ${total.toFixed(2)}`;
-            
-            const continueBtn = document.getElementById('continueBtn');
-            const orderedGroups = getGroupsByOrder();
-            const currentGroup = orderedGroups[currentStepIndex];
-            
-            if (currentGroup && selections[currentGroup.id]) {
-                continueBtn.disabled = false;
-                if (currentStepIndex === orderedGroups.length - 1) {
-                    continueBtn.textContent = 'Ver Resumo';
-                } else {
-                    continueBtn.textContent = 'Continuar';
-                }
-            } else {
-                continueBtn.disabled = true;
-            }
+        function updateBottomBar(){
+            let total=0;
+            Object.values(selections).forEach(i=>{if(i)total+=i.preco});
+            document.getElementById('totalPrice').textContent=`R$ ${total.toFixed(2)}`;
+            const btn=document.getElementById('continueBtn');
+            const og=getGroupsByOrder();
+            const cg=og[currentStepIndex];
+            if(cg&&selections[cg.id]){
+                btn.disabled=false;
+                btn.textContent=currentStepIndex===og.length-1?'Ver Resumo':'Continuar';
+            }else btn.disabled=true;
         }
 
-        function handleContinue() {
-            const orderedGroups = getGroupsByOrder();
-            if (currentStepIndex < orderedGroups.length - 1) {
-                currentStepIndex++;
-                showStepContent(currentStepIndex);
-            } else {
-                showSummary();
-            }
+        function handleContinue(){
+            const og=getGroupsByOrder();
+            if(currentStepIndex<og.length-1){currentStepIndex++;showStepContent(currentStepIndex)}
+            else showSummary();
         }
 
-        function goBack() {
-            if (currentStepIndex > 0) {
-                currentStepIndex--;
-                showStepContent(currentStepIndex);
-            }
-        }
+        function goBack(){if(currentStepIndex>0){currentStepIndex--;showStepContent(currentStepIndex)}}
 
-        function showStepContent(stepIndex) {
-            currentStepIndex = stepIndex;
-            const orderedGroups = getGroupsByOrder();
-            
-            orderedGroups.forEach((group, index) => {
-                const stepElement = document.getElementById(`step${index}`);
-                if (stepElement) {
-                    stepElement.classList.toggle('hidden', index !== stepIndex);
-                }
+        function showStepContent(si){
+            currentStepIndex=si;
+            const og=getGroupsByOrder();
+            og.forEach((g,i)=>{
+                const el=document.getElementById(`step${i}`);
+                if(el)el.classList.toggle('hidden',i!==si);
             });
-            
-            const steps = document.querySelectorAll('.progress-step');
-            steps.forEach((s, index) => {
-                s.classList.remove('active', 'completed');
-                if (index === stepIndex) {
-                    s.classList.add('active');
-                } else if (index < stepIndex) {
-                    s.classList.add('completed');
-                }
+            document.querySelectorAll('.progress-step').forEach((s,i)=>{
+                s.classList.remove('active','completed');
+                if(i===si)s.classList.add('active');
+                else if(i<si)s.classList.add('completed');
             });
-            
-            const progress = orderedGroups.length > 1 ? (stepIndex / (orderedGroups.length - 1)) * 100 : 0;
-            const progressFill = document.getElementById('progressFill');
-            if (progressFill) {
-                progressFill.style.width = progress + '%';
-            }
-            
+            const progress=og.length>1?(si/(og.length-1))*100:0;
+            const pf=document.getElementById('progressFill');
+            if(pf)pf.style.width=progress+'%';
             updateBottomBar();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({top:0,behavior:'smooth'});
         }
 
-        function showSummary() {
-            const orderedGroups = getGroupsByOrder();
-            const summaryItems = document.getElementById('summaryItems');
-            
-            summaryItems.innerHTML = orderedGroups.map(group => {
-                const item = selections[group.id];
-                return `
-                    <div class="summary-item">
-                        <div class="summary-label">${group.icone} ${group.nome}</div>
-                        <div class="summary-value">${item ? `${item.nome} - R$ ${item.preco.toFixed(2)}` : '-'}</div>
-                    </div>
-                `;
+        function showSummary(){
+            const og=getGroupsByOrder();
+            const si=document.getElementById('summaryItems');
+            si.innerHTML=og.map(g=>{
+                const item=selections[g.id];
+                return`<div class="summary-item"><div class="summary-label">${g.icone} ${g.nome}</div>
+                <div class="summary-value">${item?`${item.nome} - R$ ${item.preco.toFixed(2)}`:'-'}</div></div>`;
             }).join('');
-            
-            let total = 0;
-            Object.values(selections).forEach(item => {
-                if (item) total += item.preco;
-            });
-            
-            document.getElementById('summaryTotal').textContent = `R$ ${total.toFixed(2)}`;
+            let total=0;
+            Object.values(selections).forEach(i=>{if(i)total+=i.preco});
+            document.getElementById('summaryTotal').textContent=`R$ ${total.toFixed(2)}`;
             document.getElementById('summaryModal').classList.add('active');
         }
 
-        function sendWhatsApp() {
-            let total = 0;
-            let message = '🎂 *Novo Pedido - Fafa Bolos*\n\n';
-            message += '*MEU BOLO PERSONALIZADO:*\n\n';
-            
-            const orderedGroups = getGroupsByOrder();
-            orderedGroups.forEach(group => {
-                const item = selections[group.id];
-                if (item) {
-                    message += `${group.icone} *${group.nome}:* ${item.nome}\n`;
-                    message += `   R$ ${item.preco.toFixed(2)}\n\n`;
-                    total += item.preco;
+        function sendWhatsApp(){
+            let total=0,msg='🎂 *Novo Pedido - Fafa Bolos*\n\n*MEU BOLO PERSONALIZADO:*\n\n';
+            const og=getGroupsByOrder();
+            og.forEach(g=>{
+                const item=selections[g.id];
+                if(item){
+                    msg+=`${g.icone} *${g.nome}:* ${item.nome}\n   R$ ${item.preco.toFixed(2)}\n\n`;
+                    total+=item.preco;
                 }
             });
-            
-            const sinal = total * 0.5;
-            message += `━━━━━━━━━━━━━━━━━━\n`;
-            message += `💰 *VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
-            message += `⚠️ *IMPORTANTE:*\n`;
-            message += `📌 Sinal de 50%: *R$ ${sinal.toFixed(2)}*\n`;
-            message += `📌 Restante na entrega: R$ ${(total - sinal).toFixed(2)}`;
-
-            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
+            const sinal=total*0.5;
+            msg+=`━━━━━━━━━━━━━━━━━━\n💰 *VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n⚠️ *IMPORTANTE:*\n📌 Sinal de 50%: *R$ ${sinal.toFixed(2)}*\n📌 Restante na entrega: R$ ${(total-sinal).toFixed(2)}`;
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
         }
 
-        function showLogin() {
-            document.getElementById('loginModal').classList.add('active');
-        }
+        function showLogin(){document.getElementById('loginModal').classList.add('active')}
 
-        function handleLogin(event) {
-            event.preventDefault();
-            const user = document.getElementById('loginUser').value;
-            const password = document.getElementById('loginPassword').value;
-
-            if (user.toLowerCase() === 'fafa' && password === '1050') {
-                currentUser = { user: 'fafa' };
+        function handleLogin(e){
+            e.preventDefault();
+            const u=document.getElementById('loginUser').value;
+            const p=document.getElementById('loginPassword').value;
+            const r=document.getElementById('rememberMe').checked;
+            if(u.toLowerCase()==='fafa'&&p==='1050'){
+                currentUser={user:'fafa'};
+                if(r)localStorage.setItem('savedLogin',JSON.stringify({user:'fafa',timestamp:Date.now()}));
                 closeModal('loginModal');
                 showAdminPage();
-            } else {
-                alert('Usuário ou senha incorretos!');
-            }
+            }else alert('Usuário ou senha incorretos!');
         }
 
-        function showAdminPage() {
+        function showAdminPage(){
             document.getElementById('clientPage').classList.add('hidden');
             document.getElementById('adminPage').classList.remove('hidden');
             document.getElementById('bottomBar').classList.add('hidden');
-            document.getElementById('adminBtn').textContent = '👤 ' + currentUser.user;
+            document.getElementById('adminBtn').textContent='👤 '+currentUser.user;
             loadConfigValues();
             renderAdminGroups();
+            renderAdminItems();
         }
 
-        function logout() {
-            currentUser = null;
-            currentStepIndex = 0;
-            selections = {};
+        function logout(){
+            currentUser=null;
+            currentStepIndex=0;
+            selections={};
+            localStorage.removeItem('savedLogin');
             document.getElementById('clientPage').classList.remove('hidden');
             document.getElementById('adminPage').classList.add('hidden');
             document.getElementById('bottomBar').classList.remove('hidden');
-            document.getElementById('adminBtn').textContent = '🔐 Admin';
+            document.getElementById('adminBtn').textContent='🔐 Admin';
             buildClientInterface();
             renderClientOptions();
         }
 
-        function showTab(tab) {
-            currentTab = tab;
-            
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        function showTab(tab){
+            currentTab=tab;
+            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
             document.getElementById('tabGrupos').classList.add('hidden');
             document.getElementById('tabItens').classList.add('hidden');
             document.getElementById('tabConfig').classList.add('hidden');
-            
-            if (tab === 'grupos') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            if(tab==='grupos'){
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
                 document.getElementById('tabGrupos').classList.remove('hidden');
                 renderAdminGroups();
-            } else if (tab === 'itens') {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            }else if(tab==='itens'){
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
                 document.getElementById('tabItens').classList.remove('hidden');
                 renderAdminItems();
-            } else if (tab === 'config') {
-                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+            }else if(tab==='config'){
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('tabConfig').classList.remove('hidden');
                 loadConfigValues();
             }
         }
 
-        function renderAdminGroups() {
-            const container = document.getElementById('groupsList');
-            const orderedGroups = getGroupsByOrder();
-            
-            container.innerHTML = orderedGroups.map(group => `
-                <div class="group-section">
-                    <div class="group-header">
-                        <div>
-                            <div class="group-name">${group.icone} ${group.nome}</div>
-                            <div style="font-size: 0.875rem; color: #666;">Etapa ${group.ordem}</div>
-                        </div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn-group-action btn-edit" onclick="editGroup(${group.id})">✏️</button>
-                            <button class="btn-group-action btn-delete" onclick="deleteGroup(${group.id})">🗑️</button>
-                        </div>
-                    </div>
-                    <div style="font-size: 0.875rem; color: #666;">
-                        ${getItemsByGroup(group.id).length} item(ns) cadastrado(s)
-                    </div>
-                </div>
-            `).join('');
+        function renderAdminGroups(){
+            const c=document.getElementById('groupsList');
+            const og=getGroupsByOrder();
+            c.innerHTML=og.map(g=>`<div class="group-section"><div class="group-header"><div>
+                <div class="group-name">${g.icone} ${g.nome}</div>
+                <div style="font-size:0.875rem;color:#666">Etapa ${g.ordem} • ${getItemsByGroup(g.id).length} item(ns)</div>
+                </div></div></div>`).join('');
         }
 
-        function renderAdminItems() {
-            const container = document.getElementById('itemsList');
-            
-            container.innerHTML = items.map(item => {
-                const group = groups.find(g => g.id === item.grupoId);
-                return `
-                    <div class="item-card">
-                        <img src="${item.imagem}" alt="${item.nome}" class="item-image"
-                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2260%22%3E🖼️%3C/text%3E%3C/svg%3E'">
-                        <div style="font-size: 0.75rem; color: #ea1d2c; font-weight: 600; margin-bottom: 0.5rem;">
-                            ${group ? group.icone + ' ' + group.nome : 'Sem grupo'}
-                        </div>
-                        <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">${item.nome}</div>
-                        <div style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">${item.descricao}</div>
-                        <div style="font-size: 1.25rem; font-weight: 700; color: #ea1d2c;">R$ ${item.preco.toFixed(2)}</div>
-                        <div class="item-actions">
-                            <button class="btn-edit" onclick="editItem(${item.id})">✏️ Editar</button>
-                            <button class="btn-delete" onclick="deleteItem(${item.id})">🗑️ Excluir</button>
-                        </div>
+        function renderAdminItems(){
+            const c=document.getElementById('itemsList');
+            c.innerHTML=items.map(it=>{
+                const gr=groups.find(g=>g.id===it.grupoId);
+                return`<div class="item-card">
+                    <img src="${it.imagem}" alt="${it.nome}" class="item-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2260%22%3E🖼️%3C/text%3E%3C/svg%3E'">
+                    <div style="font-size:0.75rem;color:#ea1d2c;font-weight:600;margin-bottom:0.5rem">
+                        ${gr?gr.icone+' '+gr.nome:'Sem grupo'}
                     </div>
-                `;
+                    <div style="font-size:1.125rem;font-weight:600;margin-bottom:0.25rem">${it.nome}</div>
+                    <div style="font-size:0.875rem;color:#666;margin-bottom:0.5rem">${it.descricao}</div>
+                    <div style="font-size:1.25rem;font-weight:700;color:#ea1d2c">R$ ${it.preco.toFixed(2)}</div>
+                </div>`;
             }).join('');
         }
 
-        function showGroupForm(id = null) {
-            editingGroupId = id;
-            
-            if (id) {
-                const group = groups.find(g => g.id === id);
-                if (group) {
-                    document.getElementById('groupModalTitle').textContent = 'Editar Grupo';
-                    document.getElementById('groupName').value = group.nome;
-                    document.getElementById('groupIcon').value = group.icone;
-                    document.getElementById('groupOrder').value = group.ordem;
+        function loadConfigValues(){
+            document.getElementById('whatsappNumber').value=WHATSAPP_NUMBER;
+        }
+
+        function saveWhatsApp(){
+            const n=document.getElementById('whatsappNumber').value.trim();
+            WHATSAPP_NUMBER=n;
+            localStorage.setItem('whatsappNumber',n);
+            showSyncMessage('✅ WhatsApp salvo!','success');
+        }
+
+        async function syncWithSheet(silent=false){
+            if(!silent)showSyncMessage('🔄 Sincronizando...','info');
+            try{
+                const sid=SHEET_URL.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/)?.[1];
+                if(!sid){
+                    if(!silent)showSyncMessage('❌ Link inválido!','error');
+                    return false;
                 }
-            } else {
-                document.getElementById('groupModalTitle').textContent = 'Adicionar Grupo';
-                document.getElementById('groupName').value = '';
-                document.getElementById('groupIcon').value = '';
-                document.getElementById('groupOrder').value = groups.length + 1;
-            }
-            
-            document.getElementById('groupModal').classList.add('active');
-        }
-
-        function saveGroup(event) {
-            event.preventDefault();
-            
-            const nome = document.getElementById('groupName').value;
-            const icone = document.getElementById('groupIcon').value;
-            const ordem = parseInt(document.getElementById('groupOrder').value);
-            
-            if (editingGroupId) {
-                const index = groups.findIndex(g => g.id === editingGroupId);
-                groups[index] = { ...groups[index], nome, icone, ordem };
-            } else {
-                const newGroup = { id: Date.now(), nome, icone, ordem };
-                groups.push(newGroup);
-            }
-            
-            saveData();
-            closeModal('groupModal');
-            renderAdminGroups();
-            buildClientInterface();
-            renderClientOptions();
-            event.target.reset();
-        }
-
-        function editGroup(id) {
-            showGroupForm(id);
-        }
-
-        function deleteGroup(id) {
-            const groupItems = getItemsByGroup(id);
-            if (groupItems.length > 0) {
-                alert('Não é possível excluir um grupo que possui itens cadastrados!');
-                return;
-            }
-            
-            if (!confirm('Excluir este grupo?')) return;
-            
-            groups = groups.filter(g => g.id !== id);
-            saveData();
-            renderAdminGroups();
-            buildClientInterface();
-            renderClientOptions();
-        }
-
-        function showItemForm(id = null) {
-            editingItemId = id;
-            
-            const groupSelect = document.getElementById('itemGroup');
-            groupSelect.innerHTML = groups.map(g => 
-                `<option value="${g.id}">${g.icone} ${g.nome}</option>`
-            ).join('');
-            
-            if (id) {
-                const item = items.find(i => i.id === id);
-                if (item) {
-                    document.getElementById('itemModalTitle').textContent = 'Editar Item';
-                    document.getElementById('itemGroup').value = item.grupoId;
-                    document.getElementById('itemName').value = item.nome;
-                    document.getElementById('itemDescription').value = item.descricao;
-                    document.getElementById('itemPrice').value = item.preco;
-                    document.getElementById('itemImage').value = item.imagem;
-                }
-            } else {
-                document.getElementById('itemModalTitle').textContent = 'Adicionar Item';
-                document.getElementById('itemName').value = '';
-                document.getElementById('itemDescription').value = '';
-                document.getElementById('itemPrice').value = '';
-                document.getElementById('itemImage').value = '';
-            }
-            
-            document.getElementById('itemModal').classList.add('active');
-        }
-
-        function saveItem(event) {
-            event.preventDefault();
-            
-            const grupoId = parseInt(document.getElementById('itemGroup').value);
-            const nome = document.getElementById('itemName').value;
-            const descricao = document.getElementById('itemDescription').value;
-            const preco = parseFloat(document.getElementById('itemPrice').value);
-            const imagem = document.getElementById('itemImage').value;
-            
-            if (editingItemId) {
-                const index = items.findIndex(i => i.id === editingItemId);
-                items[index] = { ...items[index], grupoId, nome, descricao, preco, imagem };
-            } else {
-                const newItem = { id: Date.now(), grupoId, nome, descricao, preco, imagem };
-                items.push(newItem);
-            }
-            
-            saveData();
-            closeModal('itemModal');
-            renderAdminItems();
-            buildClientInterface();
-            renderClientOptions();
-            event.target.reset();
-        }
-
-        function editItem(id) {
-            showItemForm(id);
-        }
-
-        function deleteItem(id) {
-            if (!confirm('Excluir este item?')) return;
-            
-            items = items.filter(i => i.id !== id);
-            saveData();
-            renderAdminItems();
-            buildClientInterface();
-            renderClientOptions();
-        }
-
-        function loadConfigValues() {
-            document.getElementById('sheetUrl').value = SHEET_URL;
-            document.getElementById('whatsappNumber').value = WHATSAPP_NUMBER;
-        }
-
-        function saveSheetUrl() {
-            const url = document.getElementById('sheetUrl').value.trim();
-            SHEET_URL = url;
-            localStorage.setItem('sheetUrl', url);
-            showSyncMessage('✅ Link da planilha salvo com sucesso!', 'success');
-        }
-
-        function saveWhatsApp() {
-            const number = document.getElementById('whatsappNumber').value.trim();
-            WHATSAPP_NUMBER = number;
-            localStorage.setItem('whatsappNumber', number);
-            showSyncMessage('✅ Número do WhatsApp salvo com sucesso!', 'success');
-        }
-
-        async function syncWithSheet() {
-            if (!SHEET_URL) {
-                showSyncMessage('❌ Configure o link da planilha primeiro!', 'error');
-                return;
-            }
-
-            showSyncMessage('🔄 Sincronizando...', 'info');
-
-            try {
-                const sheetId = extractSheetId(SHEET_URL);
-                if (!sheetId) {
-                    showSyncMessage('❌ Link inválido! Use o link de publicação da planilha.', 'error');
-                    return;
-                }
-
-                const gruposUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=Grupos`;
-                const itensUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=Itens`;
-
-                const gruposResponse = await fetch(gruposUrl);
-                const gruposText = await gruposResponse.text();
-                const gruposJson = JSON.parse(gruposText.substring(47).slice(0, -2));
-
-                const itensResponse = await fetch(itensUrl);
-                const itensText = await itensResponse.text();
-                const itensJson = JSON.parse(itensText.substring(47).slice(0, -2));
-
-                groups = gruposJson.table.rows.map(row => ({
-                    id: parseInt(row.c[0]?.v || 0),
-                    nome: row.c[1]?.v || '',
-                    icone: row.c[2]?.v || '📦',
-                    ordem: parseInt(row.c[3]?.v || 1)
-                })).filter(g => g.id > 0);
-
-                items = itensJson.table.rows.map(row => ({
-                    id: parseInt(row.c[0]?.v || 0),
-                    grupoId: parseInt(row.c[1]?.v || 0),
-                    nome: row.c[2]?.v || '',
-                    descricao: row.c[3]?.v || '',
-                    preco: parseFloat(row.c[4]?.v || 0),
-                    imagem: row.c[5]?.v || ''
-                })).filter(i => i.id > 0);
-
-                saveData();
+                const gurl=`https://docs.google.com/spreadsheets/d/${sid}/gviz/tq?tqx=out:json&sheet=Grupos`;
+                const iurl=`https://docs.google.com/spreadsheets/d/${sid}/gviz/tq?tqx=out:json&sheet=Itens`;
+                const gr=await fetch(gurl);
+                const gt=await gr.text();
+                const gj=JSON.parse(gt.substring(47).slice(0,-2));
+                const ir=await fetch(iurl);
+                const it=await ir.text();
+                const ij=JSON.parse(it.substring(47).slice(0,-2));
+                groups=gj.table.rows.map(r=>({
+                    id:parseInt(r.c[0]?.v||0),
+                    nome:r.c[1]?.v||'',
+                    icone:r.c[2]?.v||'📦',
+                    ordem:parseInt(r.c[3]?.v||1)
+                })).filter(g=>g.id>0);
+                items=ij.table.rows.map(r=>({
+                    id:parseInt(r.c[0]?.v||0),
+                    grupoId:parseInt(r.c[1]?.v||0),
+                    nome:r.c[2]?.v||'',
+                    descricao:r.c[3]?.v||'',
+                    preco:parseFloat(r.c[4]?.v||0),
+                    imagem:r.c[5]?.v||''
+                })).filter(i=>i.id>0);
                 buildClientInterface();
                 renderClientOptions();
-                renderAdminGroups();
-                renderAdminItems();
-
-                showSyncMessage(`✅ Sincronizado! ${groups.length} grupos e ${items.length} itens carregados.`, 'success');
-            } catch (error) {
-                console.error('Erro na sincronização:', error);
-                showSyncMessage('❌ Erro ao sincronizar. Verifique se a planilha está publicada corretamente.', 'error');
+                if(currentUser){
+                    renderAdminGroups();
+                    renderAdminItems();
+                }
+                if(!silent){
+                    showSyncMessage(`✅ Sincronizado! ${groups.length} grupos e ${items.length} itens.`,'success');
+                    const badge=document.getElementById('syncBadge');
+                    badge.style.display='inline-block';
+                    setTimeout(()=>badge.style.display='none',3000);
+                }
+                return true;
+            }catch(err){
+                console.error('Erro:',err);
+                if(!silent)showSyncMessage('❌ Erro ao sincronizar.','error');
+                return false;
             }
         }
 
-        function extractSheetId(url) {
-            const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-            return match ? match[1] : null;
+        function showSyncMessage(msg,type){
+            const st=document.getElementById('syncStatus');
+            const me=document.getElementById('syncMessage');
+            const colors={success:'#d4edda',error:'#f8d7da',info:'#d1ecf1'};
+            st.style.display='block';
+            st.style.background=colors[type]||colors.info;
+            me.textContent=msg;
+            if(type!=='info')setTimeout(()=>st.style.display='none',5000);
         }
 
-        function showSyncMessage(message, type) {
-            const status = document.getElementById('syncStatus');
-            const messageEl = document.getElementById('syncMessage');
-            
-            const colors = {
-                success: '#d4edda',
-                error: '#f8d7da',
-                info: '#d1ecf1'
-            };
-
-            status.style.display = 'block';
-            status.style.background = colors[type] || colors.info;
-            messageEl.textContent = message;
-
-            if (type !== 'info') {
-                setTimeout(() => {
-                    status.style.display = 'none';
-                }, 5000);
-            }
+        function closeModal(mid){
+            document.getElementById(mid).classList.remove('active');
         }
 
-        function clearLocalData() {
-            if (!confirm('⚠️ Isso vai apagar TODOS os dados locais (grupos e itens). Tem certeza?\n\nDica: Sincronize com a planilha antes para não perder nada.')) {
-                return;
-            }
-
-            localStorage.removeItem('groups');
-            localStorage.removeItem('items');
-            
-            groups = [];
-            items = [];
-            selections = {};
-            
-            loadData();
-            buildClientInterface();
-            renderClientOptions();
-            renderAdminGroups();
-            renderAdminItems();
-
-            showSyncMessage('✅ Dados locais limpos. Dados padrão restaurados.', 'success');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-            }
+        window.onclick=function(e){
+            if(e.target.classList.contains('modal'))e.target.classList.remove('active');
         };
 
-        loadData();
-        buildClientInterface();
-        renderClientOptions();
+        (async function init(){
+            await loadData();
+            buildClientInterface();
+            renderClientOptions();
+            const saved=localStorage.getItem('savedLogin');
+            if(saved){
+                try{
+                    const ld=JSON.parse(saved);
+                    const thirtyDays=30*24*60*60*1000;
+                    if(Date.now()-ld.timestamp<thirtyDays){
+                        currentUser={user:ld.user};
+                        showAdminPage();
+                    }else localStorage.removeItem('savedLogin');
+                }catch(e){
+                    localStorage.removeItem('savedLogin');
+                }
+            }
+        })();
     </script>
 </body>
 </html>
