@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Monte seu Bolo - Confeitaria Fafa</title>
+    <title>Monte seu Bolo - Fafa Bolos</title>
     <style>
         * {
             margin: 0;
@@ -556,47 +556,10 @@
     <div class="container">
         <div id="clientPage">
             <div class="progress-bar">
-                <div class="progress-steps">
-                    <div class="progress-line">
-                        <div class="progress-line-fill" id="progressFill" style="width: 0%"></div>
-                    </div>
-                    <div class="progress-step active" data-step="massa">
-                        <div class="step-circle">1</div>
-                        <div class="step-label">Massa</div>
-                    </div>
-                    <div class="progress-step" data-step="recheio">
-                        <div class="step-circle">2</div>
-                        <div class="step-label">Recheio</div>
-                    </div>
-                    <div class="progress-step" data-step="cobertura">
-                        <div class="step-circle">3</div>
-                        <div class="step-label">Cobertura</div>
-                    </div>
-                </div>
+                <div class="progress-steps" id="progressSteps"></div>
             </div>
 
-            <div id="stepMassa" class="step-content">
-                <div class="section-header">
-                    <h2 class="section-title">Escolha a Massa</h2>
-                </div>
-                <div class="options-list" id="massaOptions"></div>
-            </div>
-
-            <div id="stepRecheio" class="step-content hidden">
-                <div class="section-header">
-                    <h2 class="section-title">Escolha o Recheio</h2>
-                    <button class="btn-back" onclick="goBack()">← Voltar</button>
-                </div>
-                <div class="options-list" id="recheioOptions"></div>
-            </div>
-
-            <div id="stepCobertura" class="step-content hidden">
-                <div class="section-header">
-                    <h2 class="section-title">Escolha a Cobertura</h2>
-                    <button class="btn-back" onclick="goBack()">← Voltar</button>
-                </div>
-                <div class="options-list" id="coberturaOptions"></div>
-            </div>
+            <div id="stepContents"></div>
         </div>
 
         <div id="adminPage" class="hidden">
@@ -943,7 +906,7 @@
 
         function sendWhatsApp() {
             let total = 0;
-            let message = '🎂 *Novo Pedido - Confeitaria Fafa*\n\n';
+            let message = '🎂 *Novo Pedido - Fafa Bolos*\n\n';
             message += '*MEU BOLO PERSONALIZADO:*\n\n';
             
             const orderedGroups = getGroupsByOrder();
